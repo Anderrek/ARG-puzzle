@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Puzzle 7</title>
+<title>Puzzle 8</title>
 <style>
   body {
     background-color: #0d0d0d;
@@ -13,20 +13,48 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     padding: 20px;
+    text-align: center;
   }
   h1 {
     margin-bottom: 20px;
   }
-  button, input[type="text"] {
+  .lyrics {
+    max-width: 600px;
+    background-color: #111;
+    border: 1px solid #333;
+    padding: 20px;
+    font-size: 18px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    font-weight: normal;
+    margin-bottom: 20px;
+    user-select: none;
+  }
+  .different-font {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+  }
+  .uppercase {
+    text-transform: uppercase;
+  }
+  .number-substitution {
+    font-weight: bold;
+  }
+  input[type="text"], button {
     font-family: 'Courier New', monospace;
     font-size: 18px;
     padding: 10px 20px;
     margin: 10px 0;
     border: none;
     border-radius: 4px;
+  }
+  input[type="text"] {
+    width: 300px;
+    color: #222;
+    border: 1px solid #555;
   }
   button {
     background-color: #222;
@@ -37,11 +65,6 @@
   }
   button:hover {
     background-color: #444;
-  }
-  input[type="text"] {
-    width: 300px;
-    color: #222;
-    border: 1px solid #555;
   }
   #result {
     margin-top: 15px;
@@ -64,34 +87,80 @@
 </head>
 <body>
   <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
-  <h1>Puzzle 7</h1>
+  <h1>Puzzle 8</h1>
 
-  <button id="playBtn">Play</button>
-  <audio id="audio" src="audio/puzzle7.mp3"></audio>
+  <div class="lyrics">
+I that am <span class="different-font">lost</span>,oh who will <span class="uppercase">FIND</span> me?<br><br>
 
-  <input type="text" id="answerInput" placeholder="Enter your answer" autocomplete="off" />
+Deep down below the old beech tree<br><br>
 
+Help succour me now the east winds blow<br><br>
+
+Sixteen by six ,<span class="number-substitution">br0th3r</span>,and under we go!<br><br>
+
+Be not afraid to walk in the shade<br><br>
+
+Save one save all,come try<br><br>
+
+My steps -five by seven<br><br>
+
+Life is closer to heaven<br><br>
+
+Look down with dark gaze,from on high<br><br>
+
+Before he was gone ,right back over my hill<br><br>
+
+Who now will find him?<br><br>
+
+Why, nobody will <br><br>
+
+Doom shall i bring to him,that am queen<br><br>
+
+Lost forever, nine by nineteen<br><br>
+
+Without your love, he'll be gone before <br><br>
+
+Save pity for strangers, show love the door.<br><br>
+
+My soul seek the shade of my Willow's bloom<br><br>
+
+Inside, brother mine - <br><br>
+
+Let death make a room.
+  </div>
+
+  <input type="text" id="answerInput" placeholder="Enter the three hidden words, comma separated" autocomplete="off" />
   <button onclick="checkAnswer()">Submit</button>
 
   <div id="result"></div>
 
 <script>
-  const audio = document.getElementById('audio');
-  const playBtn = document.getElementById('playBtn');
-
-  playBtn.addEventListener('click', () => {
-    audio.play();
-  });
-
-  const correctAnswer = "hello hi".toLowerCase();
+  const answers = ["lost", "find", "brother"];
 
   function checkAnswer() {
-    const input = document.getElementById('answerInput').value.trim().toLowerCase();
+    const input = document.getElementById('answerInput').value.toLowerCase().replace(/\s/g, '');
     const message = document.getElementById('result');
-    if(input === correctAnswer) {
-      localStorage.setItem("puzzle7", "solved");
+    const userWords = input.split(',');
+
+    if(userWords.length !== 3) {
+      message.style.color = "#ff4444";
+      message.innerText = "Please enter exactly three words, separated by commas.";
+      return;
+    }
+
+    const trimmedWords = userWords.map(w => w.trim());
+
+    // Normalize 'brother' from number-substitution 'br0th3r'
+    const normalize = w => w.replace(/0/g, 'o').replace(/3/g, 'e');
+
+    const normalizedUserWords = trimmedWords.map(normalize);
+
+    const isCorrect = answers.every(word => normalizedUserWords.includes(word));
+
+    if(isCorrect) {
       message.style.color = "#44ff44";
       message.innerText = "Correct! Puzzle solved.";
+      localStorage.setItem("puzzle8", "solved");
     } else {
       message.style.color = "#ff4444";
       message.innerText = "Try again.";
@@ -99,11 +168,11 @@
   }
 
   window.onload = () => {
-    if(localStorage.getItem("puzzle7") === "solved") {
+    if(localStorage.getItem("puzzle8") === "solved") {
       const message = document.getElementById('result');
       message.style.color = "#44ff44";
       message.innerText = "You have already solved this puzzle!";
-      document.getElementById('answerInput').value = correctAnswer;
+      document.getElementById('answerInput').value = answers.join(', ');
     }
   };
 </script>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Zagadka 3 - Kod Morse'a</title>
+<title>Puzzle 3 - Morse Code</title>
 <style>
   body {
     background-color: #0d0d0d;
@@ -26,7 +26,6 @@
     font-size: 36px;
     letter-spacing: 12px;
     margin-bottom: 25px;
-    border-radius: 8px;
     width: 400px;
     text-align: center;
     user-select: none;
@@ -44,7 +43,6 @@
     font-family: 'Courier New', monospace;
     font-size: 18px;
     padding: 8px 12px;
-    border-radius: 6px;
     border: 1px solid #555;
     width: 300px;
     color: #222;
@@ -56,7 +54,6 @@
     background-color: #222;
     color: #eee;
     border: none;
-    border-radius: 7px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     user-select: none;
@@ -80,6 +77,7 @@
       color: #ccc;
       border: 1px solid #444;
       cursor: pointer;
+      user-select: none;
   }
   .dot {
     display: inline-block;
@@ -106,30 +104,19 @@
 </head>
 <body>
   <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
-<h1>Puzzle 3 - Morse</h1>
+  <h1>Puzzle 3 - Morse Code</h1>
 
-<div class="morse-display" aria-label="Animacja kodu Morse'a">
-  <!-- Animacja pojawi się tutaj -->
-</div>
+  <div class="morse-display" aria-label="Morse code animation">
+    <!-- Animation will appear here -->
+  </div>
 
-<div class="hint">
-  Podpowiedź: Kropka to krótki sygnał, kreska to długi. Przerwy oznaczają odstępy między literami i słowami.
-</div>
+  <input type="text" id="answerInput" placeholder="Type your decoded message" autocomplete="off" />
 
-<input type="text" id="answerInput" placeholder="Wpisz odszyfrowaną wiadomość" autocomplete="off" />
+  <button onclick="checkAnswer()">Check Answer</button>
 
-<button onclick="checkAnswer()">Sprawdź odpowiedź</button>
-
-<div id="result"></div>
-
-<button class="back-btn" onclick="window.location.href='index.html'">Powrót do strony głównej</button>
+  <div id="result"></div>
 
 <script>
-  // Przykładowa wiadomość w kodzie Morse'a: "HELLO"
-  // H: ....  E: .  L: .-..  L: .-..  O: ---
-  // Zaprezentujemy sekwencję znaków: [dot, dot, dot, dot] [space] [dot] [space] [dot dash dot dot] [space] [dot dash dot dot] [space] [dash dash dash]
-  // Do animacji wykorzystamy elementy .dot i .dash z podświetleniem
-
   const morseSequence = [
     'dot','dot','dot','dot','space',
     'dot','space',
@@ -140,7 +127,6 @@
 
   const display = document.querySelector('.morse-display');
 
-  // Tworzymy elementy dla sekwencji
   let elements = [];
 
   morseSequence.forEach(symbol => {
@@ -163,46 +149,42 @@
     }
   });
 
-  // Animacja kolejnych sygnałów (podświetlanie kolejnych kropek/kreski)
   let index = 0;
   function animateMorse() {
     if(index > 0 && elements[index-1]) {
       elements[index-1].classList.remove('active');
     }
     if(index >= elements.length) {
-      index = 0; // powtarzamy animację w kółko
+      index = 0;
     }
     if(elements[index]) {
       elements[index].classList.add('active');
-      // Krótka kropka trwa 300ms, kreska 900ms, przestrzeń 0 (brak animacji)
       let delay = elements[index].classList.contains('dot') ? 300 : 900;
       index++;
-      setTimeout(animateMorse, delay + 200); // +200ms przerwy między sygnałami
+      setTimeout(animateMorse, delay + 200);
     } else {
-      // Przerwa w sekwencji (space)
       index++;
-      setTimeout(animateMorse, 600); // przerwa dłuższa między literami/słowami
+      setTimeout(animateMorse, 600);
     }
   }
 
   animateMorse();
 
-  // Odpowiedź to tekst z odszyfrowanym kodem Morse'a
   const correctAnswer = "HELLO";
 
   function checkAnswer() {
     const input = document.getElementById('answerInput').value.trim().toUpperCase();
     if(input === correctAnswer) {
-      document.getElementById('result').textContent = "Dobrze! Zagadkę rozwiązano.";
+      document.getElementById('result').textContent = "Correct! Puzzle solved.";
       localStorage.setItem('puzzle3Solved', 'true');
     } else {
-      document.getElementById('result').textContent = "Niestety, spróbuj jeszcze raz.";
+      document.getElementById('result').textContent = "Try again.";
     }
   }
 
   window.onload = () => {
     if(localStorage.getItem('puzzle3Solved') === 'true') {
-      document.getElementById('result').textContent = "Już rozwiązałeś tę zagadkę!";
+      document.getElementById('result').textContent = "You already solved this puzzle!";
       document.getElementById('answerInput').value = correctAnswer;
     }
   };

@@ -7,7 +7,7 @@
   <style>
     body {
       background-color: #0d0d0d;
-      color: #fff;
+      color: #ffffff;
       font-family: 'Courier New', monospace;
       display: flex;
       flex-direction: column;
@@ -15,131 +15,138 @@
       justify-content: center;
       min-height: 100vh;
       margin: 0;
-      padding: 20px;
     }
 
     h1 {
-      margin-bottom: 10px;
-    }
-
-    .cipher {
-      margin-bottom: 20px;
-      font-size: 20px;
-    }
-
-    .input {
-      display: flex;
-      gap: 10px;
       margin-bottom: 20px;
     }
 
-    .input input {
-      width: 40px;
-      height: 40px;
-      font-size: 24px;
+    .puzzle {
       text-align: center;
-      background: #111;
-      color: #fff;
-      border: 1px solid #444;
+      margin-bottom: 30px;
+      max-width: 600px;
+    }
+
+    .input-display {
+      margin: 20px auto;
+      font-size: 24px;
+      border-bottom: 2px solid #fff;
+      padding: 10px;
+      min-width: 200px;
+      min-height: 30px;
     }
 
     .keyboard {
-      display: grid;
-      grid-template-columns: repeat(10, 40px);
-      gap: 5px;
-      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .key-row {
+      display: flex;
+      justify-content: center;
+      margin: 5px 0;
     }
 
     .key {
-      background: #1a1a1a;
+      background-color: #1a1a1a;
       border: 1px solid #333;
       color: #fff;
-      text-align: center;
-      padding: 10px;
+      padding: 10px 14px;
+      margin: 2px;
+      font-size: 18px;
       cursor: pointer;
-      user-select: none;
+      transition: all 0.2s ease;
     }
 
     .key:hover {
-      background: #444;
+      background-color: #333;
     }
 
-    .message {
-      margin-top: 10px;
-      font-size: 18px;
-      color: #44ff44;
-    }
-
-    .back {
+    .submit-btn {
       margin-top: 20px;
-      color: #999;
-      text-decoration: underline;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #111;
+      color: #fff;
+      border: 2px solid #444;
       cursor: pointer;
     }
 
+    .message {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #44ff44;
+    }
   </style>
 </head>
 <body>
   <h1>Puzzle 1</h1>
-  <div class="cipher">Ciphered: <strong>TGRuZG9u</strong></div>
-  <div class="input" id="inputArea">
-    <input maxlength="1" />
-    <input maxlength="1" />
-    <input maxlength="1" />
-    <input maxlength="1" />
-    <input maxlength="1" />
-    <input maxlength="1" />
+  <div class="puzzle">
+    <p>Find the hidden word using the ciphered text:</p>
+    <p><em>"GSRH RH Z HVXIVG"</em></p>
+    <div class="input-display" id="inputDisplay"></div>
   </div>
-  <div class="keyboard" id="keyboard"></div>
+
+  <div class="keyboard">
+    <div class="key-row" id="row1">
+      <button class="key" onclick="pressKey('Q')">Q</button>
+      <button class="key" onclick="pressKey('W')">W</button>
+      <button class="key" onclick="pressKey('E')">E</button>
+      <button class="key" onclick="pressKey('R')">R</button>
+      <button class="key" onclick="pressKey('T')">T</button>
+      <button class="key" onclick="pressKey('Y')">Y</button>
+      <button class="key" onclick="pressKey('U')">U</button>
+      <button class="key" onclick="pressKey('I')">I</button>
+      <button class="key" onclick="pressKey('O')">O</button>
+      <button class="key" onclick="pressKey('P')">P</button>
+    </div>
+    <div class="key-row" id="row2">
+      <button class="key" onclick="pressKey('A')">A</button>
+      <button class="key" onclick="pressKey('S')">S</button>
+      <button class="key" onclick="pressKey('D')">D</button>
+      <button class="key" onclick="pressKey('F')">F</button>
+      <button class="key" onclick="pressKey('G')">G</button>
+      <button class="key" onclick="pressKey('H')">H</button>
+      <button class="key" onclick="pressKey('J')">J</button>
+      <button class="key" onclick="pressKey('K')">K</button>
+      <button class="key" onclick="pressKey('L')">L</button>
+    </div>
+    <div class="key-row" id="row3">
+      <button class="key" onclick="pressKey('Z')">Z</button>
+      <button class="key" onclick="pressKey('X')">X</button>
+      <button class="key" onclick="pressKey('C')">C</button>
+      <button class="key" onclick="pressKey('V')">V</button>
+      <button class="key" onclick="pressKey('B')">B</button>
+      <button class="key" onclick="pressKey('N')">N</button>
+      <button class="key" onclick="pressKey('M')">M</button>
+      <button class="key" onclick="pressKey('←')">←</button>
+    </div>
+  </div>
+
+  <button class="submit-btn" onclick="checkAnswer()">Submit</button>
   <div class="message" id="message"></div>
-  <div class="back" onclick="goBack()">← Back to main</div>
 
   <script>
-    const answer = "LONDON";
-    const inputBoxes = document.querySelectorAll('#inputArea input');
-    const keyboard = document.getElementById('keyboard');
-    const message = document.getElementById('message');
+    let currentInput = "";
 
-    const keys = "QWERTYUIOPASDFGHJKLZXCVBNM".split("");
-
-    keys.forEach(char => {
-      const btn = document.createElement("div");
-      btn.className = "key";
-      btn.textContent = char;
-      btn.onclick = () => typeChar(char);
-      keyboard.appendChild(btn);
-    });
-
-    function typeChar(char) {
-      for (let box of inputBoxes) {
-        if (box.value === "") {
-          box.value = char;
-          break;
-        }
+    function pressKey(char) {
+      if (char === "←") {
+        currentInput = currentInput.slice(0, -1);
+      } else {
+        currentInput += char;
       }
-      checkAnswer();
+      document.getElementById("inputDisplay").innerText = currentInput;
     }
 
     function checkAnswer() {
-      const userInput = Array.from(inputBoxes).map(i => i.value).join('').toUpperCase();
-      if (userInput.length === 6 && userInput === answer) {
-        message.textContent = "Correct!";
+      const answer = "THISISASECRET";
+      if (currentInput.toUpperCase() === answer) {
+        document.getElementById("message").innerText = "Correct! Puzzle solved.";
         localStorage.setItem("puzzle1", "solved");
-      } else if (userInput.length === 6) {
-        message.textContent = "Incorrect. Try again.";
+      } else {
+        document.getElementById("message").innerText = "Try again.";
       }
-    }
-
-    function goBack() {
-      window.location.href = "index.html";
-    }
-
-    // Autofill if already solved
-    if (localStorage.getItem("puzzle1") === "solved") {
-      message.textContent = "Already solved.";
-      answer.split("").forEach((char, idx) => {
-        inputBoxes[idx].value = char;
-      });
     }
   </script>
 </body>

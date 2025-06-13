@@ -68,10 +68,10 @@
     }
 
     .back-button {
-      position: absolute;
+      position: fixed;
       top: 20px;
       left: 20px;
-      padding: 6px 12px;
+      padding: 10px 16px;
       font-size: 14px;
       background-color: #111;
       color: #ccc;
@@ -84,7 +84,6 @@
   <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
   <h1>Puzzle 2</h1>
   <div class="playfair-box">
-    <h3>Keyword: PLAYFAIR</h3>
     <div class="grid" id="grid">
       <!-- Litery planszy zostaną wstawione przez JS -->
     </div>
@@ -129,10 +128,9 @@
       }
     }
 
-    // Sprawdź odpowiedź
     function checkAnswer() {
       const input = document.getElementById("answer").value.trim().toLowerCase();
-      const correctAnswer = "sherlock"; // Przykład — dostosuj jak trzeba
+      const correctAnswer = "sherlock";
       const message = document.getElementById("message");
 
       if (input === correctAnswer) {
@@ -143,7 +141,6 @@
       }
     }
 
-    // Wczytaj grid przy starcie
     generateGrid();
   </script>
 </body>

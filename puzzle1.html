@@ -63,7 +63,7 @@
       background-color: #333;
     }
 
-    .submit-btn {
+    .submit-btn, .back-btn {
       margin-top: 20px;
       padding: 10px 20px;
       font-size: 18px;
@@ -71,6 +71,10 @@
       color: #fff;
       border: 2px solid #444;
       cursor: pointer;
+    }
+
+    .back-btn {
+      margin-top: 10px;
     }
 
     .message {
@@ -127,6 +131,8 @@
   <button class="submit-btn" onclick="checkAnswer()">Submit</button>
   <div class="message" id="message"></div>
 
+  <button class="back-btn" onclick="goBack()">Back to Main Page</button>
+
   <script>
     let currentInput = "";
 
@@ -147,6 +153,10 @@
       } else {
         document.getElementById("message").innerText = "Try again.";
       }
+    }
+
+    function goBack() {
+      window.location.href = "index.html";
     }
   </script>
 </body>

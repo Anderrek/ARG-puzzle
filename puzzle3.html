@@ -1,88 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Puzzle 3 - Sherlock ARG</title>
-  <style>
-    body {
-      background-color: #0d0d0d;
-      color: #fff;
-      font-family: 'Courier New', monospace;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    h1 {
-      font-size: 2em;
-      margin: 0;
-      color: #a17f12;
-      letter-spacing: 3px;
-    }
-
-    main {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .content {
-      background-color: #1a1a1a;
-      border: 2px solid #444;
-      padding: 30px;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 0 10px #a17f12;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 1.2em;
-      line-height: 1.5em;
-      user-select: none;
-    }
-
-    nav {
-      margin-top: 40px;
-      text-align: center;
-    }
-
-    nav a {
-      color: #a17f12;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1em;
-      border: 2px solid #a17f12;
-      padding: 10px 20px;
-      border-radius: 6px;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    nav a:hover {
-      background-color: #a17f12;
-      color: #0d0d0d;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zagadka 3 - Kod Morse'a</title>
+<style>
+  body {
+    background-color: #0d0d0d;
+    color: #eee;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    min-height: 100vh;
+    margin: 0;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+  .morse-display {
+    background-color: #111;
+    border: 1px solid #333;
+    padding: 20px;
+    font-size: 36px;
+    letter-spacing: 12px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    width: 400px;
+    text-align: center;
+    user-select: none;
+    font-weight: bold;
+  }
+  .hint {
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 20px;
+    font-style: italic;
+    max-width: 400px;
+    text-align: center;
+  }
+  input[type="text"] {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #555;
+    width: 300px;
+    color: #222;
+  }
+  button {
+    margin-top: 20px;
+    padding: 10px 25px;
+    font-size: 18px;
+    background-color: #222;
+    color: #eee;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button:hover {
+    background-color: #444;
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 18px;
+    min-height: 24px;
+    font-weight: bold;
+  }
+  button.back-btn {
+    margin-top: 50px;
+    background-color: #111;
+    border: 1px solid #444;
+    color: #ccc;
+    font-size: 16px;
+    padding: 8px 20px;
+    border-radius: 6px;
+  }
+  button.back-btn:hover {
+    background-color: #333;
+  }
+  .dot {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin: 0 8px;
+    background-color: #eee;
+    border-radius: 50%;
+    opacity: 0.3;
+  }
+  .dash {
+    display: inline-block;
+    width: 40px;
+    height: 15px;
+    margin: 0 8px;
+    background-color: #eee;
+    border-radius: 6px;
+    opacity: 0.3;
+  }
+  .active {
+    opacity: 1;
+  }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Puzzle 3</h1>
-  </header>
-  <main>
-    <div class="content">
-      <p>Tu znajdzie się treść zagadki. Wkrótce dodamy tu coś ciekawego...</p>
-    </div>
-    <nav>
-      <a href="index.html">← Powrót do centralnej strony</a>
-    </nav>
-  </main>
+<h1>Zagadka 3 - Kod Morse'a</h1>
+
+<div class="morse-display" aria-label="Animacja kodu Morse'a">
+  <!-- Animacja pojawi się tutaj -->
+</div>
+
+<div class="hint">
+  Podpowiedź: Kropka to krótki sygnał, kreska to długi. Przerwy oznaczają odstępy między literami i słowami.
+</div>
+
+<input type="text" id="answerInput" placeholder="Wpisz odszyfrowaną wiadomość" autocomplete="off" />
+
+<button onclick="checkAnswer()">Sprawdź odpowiedź</button>
+
+<div id="result"></div>
+
+<button class="back-btn" onclick="window.location.href='index.html'">Powrót do strony głównej</button>
+
+<script>
+  // Przykładowa wiadomość w kodzie Morse'a: "HELLO"
+  // H: ....  E: .  L: .-..  L: .-..  O: ---
+  // Zaprezentujemy sekwencję znaków: [dot, dot, dot, dot] [space] [dot] [space] [dot dash dot dot] [space] [dot dash dot dot] [space] [dash dash dash]
+  // Do animacji wykorzystamy elementy .dot i .dash z podświetleniem
+
+  const morseSequence = [
+    'dot','dot','dot','dot','space',
+    'dot','space',
+    'dot','dash','dot','dot','space',
+    'dot','dash','dot','dot','space',
+    'dash','dash','dash'
+  ];
+
+  const display = document.querySelector('.morse-display');
+
+  // Tworzymy elementy dla sekwencji
+  let elements = [];
+
+  morseSequence.forEach(symbol => {
+    if(symbol === 'dot') {
+      const d = document.createElement('span');
+      d.classList.add('dot');
+      display.appendChild(d);
+      elements.push(d);
+    } else if(symbol === 'dash') {
+      const d = document.createElement('span');
+      d.classList.add('dash');
+      display.appendChild(d);
+      elements.push(d);
+    } else if(symbol === 'space') {
+      const s = document.createElement('span');
+      s.style.display = 'inline-block';
+      s.style.width = '25px';
+      display.appendChild(s);
+      elements.push(null);
+    }
+  });
+
+  // Animacja kolejnych sygnałów (podświetlanie kolejnych kropek/kreski)
+  let index = 0;
+  function animateMorse() {
+    if(index > 0 && elements[index-1]) {
+      elements[index-1].classList.remove('active');
+    }
+    if(index >= elements.length) {
+      index = 0; // powtarzamy animację w kółko
+    }
+    if(elements[index]) {
+      elements[index].classList.add('active');
+      // Krótka kropka trwa 300ms, kreska 900ms, przestrzeń 0 (brak animacji)
+      let delay = elements[index].classList.contains('dot') ? 300 : 900;
+      index++;
+      setTimeout(animateMorse, delay + 200); // +200ms przerwy między sygnałami
+    } else {
+      // Przerwa w sekwencji (space)
+      index++;
+      setTimeout(animateMorse, 600); // przerwa dłuższa między literami/słowami
+    }
+  }
+
+  animateMorse();
+
+  // Odpowiedź to tekst z odszyfrowanym kodem Morse'a
+  const correctAnswer = "HELLO";
+
+  function checkAnswer() {
+    const input = document.getElementById('answerInput').value.trim().toUpperCase();
+    if(input === correctAnswer) {
+      document.getElementById('result').textContent = "Dobrze! Zagadkę rozwiązano.";
+      localStorage.setItem('puzzle3Solved', 'true');
+    } else {
+      document.getElementById('result').textContent = "Niestety, spróbuj jeszcze raz.";
+    }
+  }
+
+  window.onload = () => {
+    if(localStorage.getItem('puzzle3Solved') === 'true') {
+      document.getElementById('result').textContent = "Już rozwiązałeś tę zagadkę!";
+      document.getElementById('answerInput').value = correctAnswer;
+    }
+  };
+</script>
+
 </body>
 </html>

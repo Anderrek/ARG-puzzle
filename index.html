@@ -54,19 +54,32 @@
       color: #44ff44;
     }
 
-    .solve-button {
-      margin-top: 50px;
+    .solve-button, .reset-button {
+      margin-top: 30px;
       padding: 10px 20px;
-      font-size: 20px;
-      background-color: #111;
-      color: #fff;
+      font-size: 18px;
       border: 2px solid #444;
       cursor: pointer;
+    }
+
+    .solve-button {
+      background-color: #111;
+      color: #fff;
       display: none;
     }
 
     .solve-button.active {
       display: block;
+    }
+
+    .reset-button {
+      background-color: #440000;
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    .reset-button:hover {
+      background-color: #770000;
     }
   </style>
 </head>
@@ -110,7 +123,9 @@
       <div class="status" id="status9">UNSOLVED</div>
     </div>
   </div>
+
   <button class="solve-button" id="solveBtn" onclick="downloadFinalImage()">SOLVE</button>
+  <button class="reset-button" onclick="resetProgress()">Reset Progress</button>
 
   <script>
     const solved = new Set();
@@ -120,11 +135,16 @@
     }
 
     function markSolved(id) {
-      solved.add(id);
+      localStorage.setItem(`puzzle${id}`, "solved");
+      updateStatus(id);
+      checkSolveButton();
+    }
+
+    function updateStatus(id) {
       const status = document.getElementById(`status${id}`);
       status.innerText = 'SOLVED';
       status.parentElement.classList.add('solved');
-      checkSolveButton();
+      solved.add(id);
     }
 
     function checkSolveButton() {
@@ -137,8 +157,26 @@
       window.location.href = 'final_clue.png';
     }
 
-    // Mocked for demo: Automatically mark puzzles as solved for dev
-    // markSolved(1); markSolved(2); ... etc to simulate progression.
+    function resetProgress() {
+      localStorage.clear();
+      solved.clear();
+      for (let i = 1; i <= 9; i++) {
+        const status = document.getElementById(`status${i}`);
+        if (status) {
+          status.innerText = 'UNSOLVED';
+          status.parentElement.classList.remove('solved');
+        }
+      }
+      document.getElementById("solveBtn").classList.remove("active");
+    }
+
+    // Initialize from localStorage
+    for (let i = 1; i <= 9; i++) {
+      if (localStorage.getItem(`puzzle${i}`) === "solved") {
+        updateStatus(i);
+      }
+    }
+    checkSolveButton();
   </script>
 </body>
 </html>

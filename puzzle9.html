@@ -130,6 +130,8 @@
     <div id="hand" style="transform: rotate(0deg);"></div>
   </div>
 
+  <div id="codeDisplay">Code:</div>
+  <div id="result"></div>
   <div id="codeDisplay" aria-live="polite" aria-atomic="true">Code: </div>
   <div id="hint">Rotate the dial to enter the code. Each stop is recorded as a digit (1-12).</div>
 
@@ -137,6 +139,7 @@
   const hand = document.getElementById('hand');
   const clock = document.getElementById('clock');
   const result = document.getElementById('result');
+  const codeDisplay = document.getElementById('codeDisplay');
 
   let dragging = false;
   let currentAngle = 0;
@@ -156,8 +159,13 @@
     return Math.round(angle / 30) % 12 || 12;
   }
 
+  function updateCodeDisplay() {
+    codeDisplay.innerText = `Code: ${codeSequence.join(' ')}`;
+  }
+
   function recordStep(hour) {
     codeSequence.push(hour.toString());
+    updateCodeDisplay();
     if (codeSequence.length === 3) {
       checkSequence();
     }
@@ -174,6 +182,7 @@
       setTimeout(() => {
         result.innerText = "";
         codeSequence = [];
+        updateCodeDisplay();
       }, 1500);
     }
   }
@@ -212,7 +221,9 @@
       result.style.color = "#44ff44";
       result.innerText = "You have already solved this puzzle!";
     }
+    updateCodeDisplay();
   };
 </script>
+
 </body>
 </html>

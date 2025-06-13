@@ -1,88 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Puzzle 4 - Sherlock ARG</title>
-  <style>
-    body {
-      background-color: #0d0d0d;
-      color: #fff;
-      font-family: 'Courier New', monospace;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    h1 {
-      font-size: 2em;
-      margin: 0;
-      color: #a17f12;
-      letter-spacing: 3px;
-    }
-
-    main {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .content {
-      background-color: #1a1a1a;
-      border: 2px solid #444;
-      padding: 30px;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 0 10px #a17f12;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 1.2em;
-      line-height: 1.5em;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Puzzle 4</title>
+<style>
+  body {
+    background-color: #0d0d0d;
+    color: #eee;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    min-height: 100vh;
+    margin: 0;
+  }
+  h1 {
+    margin-bottom: 10px;
+  }
+  .hint {
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 25px;
+    font-style: italic;
+    max-width: 400px;
+    text-align: center;
+  }
+  .puzzle-text {
+    background-color: #111;
+    border: 1px solid #333;
+    padding: 20px;
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    width: 400px;
+    white-space: pre-wrap;
+    user-select: none;
+  }
+  input[type="text"] {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    padding: 8px 12px;
+    border: 1px solid #555;
+    width: 300px;
+    color: #222;
+  }
+  button {
+    margin-top: 20px;
+    padding: 10px 25px;
+    font-size: 18px;
+    background-color: #222;
+    color: #eee;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button:hover {
+    background-color: #444;
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 18px;
+    min-height: 24px;
+    font-weight: bold;
+  }
+  .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 16px;
+      font-size: 14px;
+      background-color: #111;
+      color: #ccc;
+      border: 1px solid #444;
+      cursor: pointer;
       user-select: none;
-    }
-
-    nav {
-      margin-top: 40px;
-      text-align: center;
-    }
-
-    nav a {
-      color: #a17f12;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1em;
-      border: 2px solid #a17f12;
-      padding: 10px 20px;
-      border-radius: 6px;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    nav a:hover {
-      background-color: #a17f12;
-      color: #0d0d0d;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Puzzle 4</h1>
-  </header>
-  <main>
-    <div class="content">
-      <p>Tu znajdzie się treść zagadki. Wkrótce dodamy tu coś ciekawego...</p>
-    </div>
-    <nav>
-      <a href="index.html">← Powrót do centralnej strony</a>
-    </nav>
-  </main>
+  <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+  <h1>Puzzle 4</h1>
+  <div class="hint">[Your hint goes here]</div>
+
+  <div class="puzzle-text" aria-label="Puzzle text with hex and binary noise">
+    <!-- Example mixed hex and binary with noise -->
+    48 65 6C 6C 6F 20 01000010 01101001 01101110 00110010 01001000 100101 57 6F 72 6C 64 00 01 111000 11010001 21
+  </div>
+
+  <input type="text" id="answerInput" placeholder="Type your decoded message" autocomplete="off" />
+
+  <button onclick="checkAnswer()">Check Answer</button>
+
+  <div id="result"></div>
+
+<script>
+  const correctAnswer = "HELLOBINARYWORLD!";
+
+  function checkAnswer() {
+    const input = document.getElementById('answerInput').value.trim().toUpperCase();
+    const message = document.getElementById('result');
+    if(input === correctAnswer) {
+      localStorage.setItem("puzzle4", "solved");
+      message.style.color = "#44ff44";
+      message.innerText = "Correct! Puzzle solved.";
+    } else {
+      message.style.color = "#ff4444";
+      message.innerText = "Try again.";
+    }
+  }
+
+  window.onload = () => {
+    if(localStorage.getItem("puzzle4") === "solved") {
+      const message = document.getElementById('result');
+      message.style.color = "#44ff44";
+      message.innerText = "You have already solved this puzzle!";
+      document.getElementById('answerInput').value = correctAnswer;
+    }
+  };
+</script>
 </body>
 </html>

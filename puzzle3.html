@@ -181,13 +181,6 @@
         message.innerText = "Try again.";
       }
   }
-
-  window.onload = () => {
-    if(localStorage.getItem('puzzle3Solved') === 'true') {
-      document.getElementById('result').textContent = "You already solved this puzzle!";
-      document.getElementById('answerInput').value = correctAnswer;
-    }
-  };
 </script>
 
 </body>

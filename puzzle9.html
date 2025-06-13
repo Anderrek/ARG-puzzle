@@ -63,7 +63,6 @@
     border-radius: 3px;
     cursor: grab;
     transition: background-color 0.2s;
-    /* pozycjonowanie: dokładne wycentrowanie u podstawy */
     margin-left: -3px; /* połowa szerokości wskazówki */
     margin-top: -100px; /* wysokość wskazówki */
     transform: rotate(0deg);
@@ -133,19 +132,19 @@
     <div class="hour-mark" style="transform: translateX(-50%) rotate(300deg); top:15px;"></div>
     <div class="hour-mark" style="transform: translateX(-50%) rotate(330deg); top:15px;"></div>
 
-    <!-- Hour numbers - ustawione bliżej środka, bez nachodzenia -->
-    <div class="hour-number" style="top: 18px; left: 50%; transform: translate(-50%, 0);">12</div>
-    <div class="hour-number" style="top: 55px; left: 78%; transform: translate(-50%, 0);">1</div>
-    <div class="hour-number" style="top: 95px; left: 92%; transform: translate(-50%, 0);">2</div>
+    <!-- Hour numbers - adjusted vertical positions -->
+    <div class="hour-number" style="top: 10px; left: 50%; transform: translate(-50%, 0);">12</div>
+    <div class="hour-number" style="top: 45px; left: 78%; transform: translate(-50%, 0);">1</div>
+    <div class="hour-number" style="top: 85px; left: 92%; transform: translate(-50%, 0);">2</div>
     <div class="hour-number" style="top: 140px; left: 96%; transform: translate(-50%, 0);">3</div>
-    <div class="hour-number" style="top: 185px; left: 88%; transform: translate(-50%, 0);">4</div>
-    <div class="hour-number" style="top: 225px; left: 72%; transform: translate(-50%, 0);">5</div>
-    <div class="hour-number" style="top: 255px; left: 50%; transform: translate(-50%, 0);">6</div>
-    <div class="hour-number" style="top: 225px; left: 28%; transform: translate(-50%, 0);">7</div>
-    <div class="hour-number" style="top: 185px; left: 12%; transform: translate(-50%, 0);">8</div>
-    <div class="hour-number" style="top: 140px; left: 6%; transform: translate(-50%, 0);">9</div>
+    <div class="hour-number" style="top: 195px; left: 88%; transform: translate(-50%, 0);">4</div>
+    <div class="hour-number" style="top: 235px; left: 72%; transform: translate(-50%, 0);">5</div>
+    <div class="hour-number" style="top: 270px; left: 50%; transform: translate(-50%, 0);">6</div>
+    <div class="hour-number" style="top: 235px; left: 28%; transform: translate(-50%, 0);">7</div>
+    <div class="hour-number" style="top: 195px; left: 12%; transform: translate(-50%, 0);">8</div>
+    <div class="hour-number" style="top: 145px; left: 6%; transform: translate(-50%, 0);">9</div>
     <div class="hour-number" style="top: 95px; left: 12%; transform: translate(-50%, 0);">10</div>
-    <div class="hour-number" style="top: 55px; left: 22%; transform: translate(-50%, 0);">11</div>
+    <div class="hour-number" style="top: 50px; left: 22%; transform: translate(-50%, 0);">11</div>
 
     <!-- Hand -->
     <div id="hand" style="transform: rotate(0deg);"></div>
@@ -162,16 +161,14 @@
   const answerInput = document.getElementById('answerInput');
 
   let dragging = false;
-
-  // Angle in degrees, 0 = 12 o'clock
   let currentAngle = 0;
 
   function getAngle(cx, cy, ex, ey) {
     let dy = ey - cy;
     let dx = ex - cx;
-    let theta = Math.atan2(dy, dx); // radians
-    let angle = theta * 180 / Math.PI; // degrees
-    angle = angle + 90; // rotate so 0 is at 12 o'clock
+    let theta = Math.atan2(dy, dx);
+    let angle = theta * 180 / Math.PI;
+    angle = angle + 90;
     if (angle < 0) angle += 360;
     return angle;
   }
@@ -181,10 +178,9 @@
     e.preventDefault();
   });
 
-  window.addEventListener('mouseup', (e) => {
+  window.addEventListener('mouseup', () => {
     if (dragging) {
       dragging = false;
-      // Snap to nearest 30 degrees (one hour)
       currentAngle = Math.round(currentAngle / 30) * 30;
       hand.style.transform = `rotate(${currentAngle}deg)`;
     }
@@ -200,19 +196,10 @@
     hand.style.transform = `rotate(${angle}deg)`;
   });
 
-  // Map angle to hour number (12 at 0deg, 1 at 30deg, ..., 11 at 330deg)
-  function angleToHour(angle) {
-    let hour = Math.round(angle / 30);
-    if(hour === 12) hour = 0;
-    return hour === 0 ? 12 : hour;
-  }
-
-  // Correct combination: 4, 9, 3 (input is string "493")
   const correctCode = "493";
 
   function checkAnswer() {
     const userAnswer = answerInput.value.trim();
-
     if(userAnswer === correctCode) {
       localStorage.setItem("puzzle9", "solved");
       result.style.color = "#44ff44";

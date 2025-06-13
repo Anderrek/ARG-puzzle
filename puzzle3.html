@@ -173,14 +173,16 @@
   const correctAnswer = "HELLO";
 
   function checkAnswer() {
-    const input = document.getElementById('answerInput').value.trim().toUpperCase();
-    if (input === correctAnswer) {
-        localStorage.setItem("puzzle3", "solved");
-        message.innerText = "Correct! Puzzle solved.";
-      } else {
-        message.innerText = "Try again.";
-      }
+  const input = document.getElementById('answerInput').value.trim().toUpperCase();
+  const message = document.getElementById('result');
+  if (input === correctAnswer) {
+    localStorage.setItem("puzzle3", "solved");
+    message.innerText = "Correct! Puzzle solved.";
+  } else {
+    message.innerText = "Try again.";
   }
+}
+
 </script>
 
 </body>

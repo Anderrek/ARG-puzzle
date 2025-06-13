@@ -2,87 +2,114 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Puzzle 1 - Sherlock ARG</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Puzzle 1</title>
   <style>
     body {
       background-color: #0d0d0d;
-      color: #fff;
+      color: #ffffff;
       font-family: 'Courier New', monospace;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    h1 {
-      font-size: 2em;
-      margin: 0;
-      color: #a17f12;
-      letter-spacing: 3px;
-    }
-
-    main {
-      flex-grow: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
     }
 
-    .content {
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .cipher-box {
       background-color: #1a1a1a;
-      border: 2px solid #444;
-      padding: 30px;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 0 10px #a17f12;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 1.2em;
-      line-height: 1.5em;
-      user-select: none;
-    }
-
-    nav {
-      margin-top: 40px;
+      border: 2px solid #333;
+      padding: 20px;
+      margin-bottom: 30px;
+      font-size: 20px;
       text-align: center;
     }
 
-    nav a {
-      color: #a17f12;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1em;
-      border: 2px solid #a17f12;
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(10, 40px);
+      grid-gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .key {
+      background-color: #333;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .key:hover {
+      background-color: #555;
+    }
+
+    .answer-box {
+      margin-top: 10px;
+      font-size: 18px;
+      letter-spacing: 2px;
+    }
+
+    .submit {
       padding: 10px 20px;
-      border-radius: 6px;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    nav a:hover {
-      background-color: #a17f12;
-      color: #0d0d0d;
+      font-size: 18px;
+      background-color: #111;
+      border: 2px solid #444;
+      color: #fff;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Puzzle 1</h1>
-  </header>
-  <main>
-    <div class="content">
-      <p>Tu znajdzie się treść zagadki. Wkrótce dodamy tu coś ciekawego...</p>
-    </div>
-    <nav>
-      <a href="index.html">← Powrót do centralnej strony</a>
-    </nav>
-  </main>
+  <h1>Puzzle 1</h1>
+  <div class="cipher-box">
+    Cipher: **TGRuZG9u**
+  </div>
+  <div class="keyboard" id="keyboard"></div>
+  <div class="answer-box" id="answerBox"></div>
+  <button class="submit" onclick="submitAnswer()">Submit</button>
+
+  <script>
+    const keys = "QWERTYUIOPASDFGHJKLZXCVBNM".split("");
+    const keyboard = document.getElementById("keyboard");
+    const answerBox = document.getElementById("answerBox");
+    let currentAnswer = "";
+
+    keys.forEach(letter => {
+      const btn = document.createElement("button");
+      btn.innerText = letter;
+      btn.className = "key";
+      btn.onclick = () => {
+        currentAnswer += letter;
+        answerBox.innerText = currentAnswer;
+      };
+      keyboard.appendChild(btn);
+    });
+
+    function submitAnswer() {
+      if (currentAnswer.toLowerCase() === "london") {
+        localStorage.setItem("puzzle1", "solved");
+        window.location.href = "index.html";
+      } else {
+        alert("Wrong answer. Try again.");
+        currentAnswer = "";
+        answerBox.innerText = "";
+      }
+    }
+
+    window.onload = () => {
+      if (localStorage.getItem("puzzle1") === "solved") {
+        window.location.href = "index.html";
+      }
+    };
+  </script>
 </body>
 </html>

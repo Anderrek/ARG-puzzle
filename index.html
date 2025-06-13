@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Puzzle Central Hub</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #ffffff;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 120px);
+      grid-gap: 20px;
+    }
+
+    .puzzle-button {
+      background-color: #1a1a1a;
+      border: 2px solid #333;
+      color: #999;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .puzzle-button:hover {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .status {
+      font-size: 14px;
+      margin-top: 10px;
+      color: #ff4444;
+    }
+
+    .solved .status {
+      color: #44ff44;
+    }
+
+    .solve-button {
+      margin-top: 50px;
+      padding: 10px 20px;
+      font-size: 20px;
+      background-color: #111;
+      color: #fff;
+      border: 2px solid #444;
+      cursor: pointer;
+      display: none;
+    }
+
+    .solve-button.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome, Detective</h1>
+  <div class="grid">
+    <div class="puzzle-button" id="puzzle1" onclick="openPuzzle(1)">
+      Puzzle 1
+      <div class="status" id="status1">UNSOLVED</div>
+    </div>
+    <div class="puzzle-button" id="puzzle2" onclick="openPuzzle(2)">
+      Puzzle 2
+      <div class="status" id="status2">UNSOLVED</div>
+    </div>
+    <div class="puzzle-button" id="puzzle3" onclick="openPuzzle(3)">
+      Puzzle 3
+      <div class="status" id="status3">UNSOLVED</div>
+    </div>
+    <div class="puzzle-button" id="puzzle4" onclick="openPuzzle(4)">
+      Puzzle 4
+      <div class="status" id="status4">UNSOLVED</div>
+    </div>
+    <div class="puzzle-button" id="puzzle5" onclick="openPuzzle(5)">
+      Puzzle 5
+      <div class="status" id="status5">UNSOLVED</div>
+    </div>
+    <div class="puzzle-button" id="puzzle6" onclick="openPuzzle(6)">
+      Puzzle 6
+      <div class="status" id="status6">UNSOLVED</div>
+    </div>
+    <div class="puzzle-button" id="puzzle7" onclick="openPuzzle(7)">
+      Puzzle 7
+      <div class="status" id="status7">UNSOLVED</div>
+    </div>
+    <div class="puzzle-button" id="puzzle8" onclick="openPuzzle(8)">
+      Puzzle 8
+      <div class="status" id="status8">UNSOLVED</div>
+    </div>
+    <div class="puzzle-button" id="puzzle9" onclick="openPuzzle(9)">
+      Puzzle 9
+      <div class="status" id="status9">UNSOLVED</div>
+    </div>
+  </div>
+  <button class="solve-button" id="solveBtn" onclick="downloadFinalImage()">SOLVE</button>
+
+  <script>
+    const solved = new Set();
+
+    function openPuzzle(id) {
+      window.location.href = `puzzle${id}.html`;
+    }
+
+    function markSolved(id) {
+      solved.add(id);
+      const status = document.getElementById(`status${id}`);
+      status.innerText = 'SOLVED';
+      status.parentElement.classList.add('solved');
+      checkSolveButton();
+    }
+
+    function checkSolveButton() {
+      if (solved.size === 9) {
+        document.getElementById("solveBtn").classList.add("active");
+      }
+    }
+
+    function downloadFinalImage() {
+      window.location.href = 'final_clue.png';
+    }
+
+    // Mocked for demo: Automatically mark puzzles as solved for dev
+    // markSolved(1); markSolved(2); ... etc to simulate progression.
+  </script>
+</body>
+</html>

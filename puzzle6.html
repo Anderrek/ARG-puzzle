@@ -85,23 +85,23 @@
 <body>
   <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
   <h1>Puzzle 6</h1>
-  <div class="hint">[Your hint goes here]</div>
+  <div class="hint">Decode the cipher to find the reference in the format "psalm231".</div>
 
   <div class="cipher-text" aria-label="Ciphered biblical quote in Atbash cipher">
-    ZMW GSV XLWV RH Z HZBH GSVIV XLMW RH Z YZHG R NVHHZTV
+    GSV OLIR RH NB HSVKSVIW
   </div>
 
-  <input type="text" id="answerInput" placeholder="Enter the decoded quote here" autocomplete="off" />
+  <input type="text" id="answerInput" placeholder="Enter the reference here" autocomplete="off" />
 
   <button onclick="checkAnswer()">Check Answer</button>
 
   <div id="result"></div>
 
 <script>
-  const correctAnswer = "AND THE LORD IS A GOOD LORD THIS IS A SIGN I PROMISE";
+  const correctAnswer = "psalm231";
 
   function checkAnswer() {
-    const input = document.getElementById('answerInput').value.trim().toUpperCase();
+    const input = document.getElementById('answerInput').value.trim().toLowerCase();
     const message = document.getElementById('result');
     if(input === correctAnswer) {
       localStorage.setItem("puzzle6", "solved");

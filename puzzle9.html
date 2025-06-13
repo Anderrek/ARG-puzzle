@@ -1,88 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Puzzle 9 - Sherlock ARG</title>
-  <style>
-    body {
-      background-color: #0d0d0d;
-      color: #fff;
-      font-family: 'Courier New', monospace;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    h1 {
-      font-size: 2em;
-      margin: 0;
-      color: #a17f12;
-      letter-spacing: 3px;
-    }
-
-    main {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .content {
-      background-color: #1a1a1a;
-      border: 2px solid #444;
-      padding: 30px;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 0 10px #a17f12;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 1.2em;
-      line-height: 1.5em;
-      user-select: none;
-    }
-
-    nav {
-      margin-top: 40px;
-      text-align: center;
-    }
-
-    nav a {
-      color: #a17f12;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1em;
-      border: 2px solid #a17f12;
-      padding: 10px 20px;
-      border-radius: 6px;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    nav a:hover {
-      background-color: #a17f12;
-      color: #0d0d0d;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Puzzle 9 - Combination Lock</title>
+<style>
+  body {
+    background-color: #0d0d0d;
+    color: #eee;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+  .clock {
+    margin-bottom: 25px;
+  }
+  .clock svg {
+    width: 200px;
+    height: 200px;
+  }
+  .hand {
+    stroke: #44ff44;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: transform 0.3s ease;
+    transform-origin: 50% 50%;
+  }
+  .circle {
+    fill: none;
+    stroke: #555;
+    stroke-width: 8;
+  }
+  .center {
+    fill: #44ff44;
+  }
+  button {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    padding: 10px 25px;
+    margin: 5px 10px;
+    background-color: #222;
+    color: #eee;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button:hover {
+    background-color: #444;
+  }
+  #result {
+    margin-top: 20px;
+    font-weight: bold;
+    min-height: 24px;
+  }
+  .back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 16px;
+    font-size: 14px;
+    background-color: #111;
+    color: #ccc;
+    border: 1px solid #444;
+    cursor: pointer;
+    user-select: none;
+  }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Puzzle 9</h1>
-  </header>
-  <main>
-    <div class="content">
-      <p>Tu znajdzie się treść zagadki. Wkrótce dodamy tu coś ciekawego...</p>
-    </div>
-    <nav>
-      <a href="index.html">← Powrót do centralnej strony</a>
-    </nav>
-  </main>
+  <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+  <h1>Puzzle 9 - Combination Lock</h1>
+
+  <div class="clock" aria-label="Combination lock clock">
+    <svg viewBox="0 0 100 100" role="img" aria-labelledby="title desc">
+      <title>Combination lock clock</title>
+      <desc>Clock face showing current hour</desc>
+      <circle class="circle" cx="50" cy="50" r="45"/>
+      <!-- Hour hand: rotate dynamically -->
+      <line id="hourHand" class="hand" x1="50" y1="50" x2="50" y2="20" />
+      <circle class="center" cx="50" cy="50" r="3" />
+    </svg>
+  </div>
+
+  <div>
+    <button id="turnLeftBtn">Turn Left (−1 hour)</button>
+    <button id="turnRightBtn">Turn Right (+1 hour)</button>
+  </div>
+
+  <div id="result"></div>
+
+<script>
+  // Aktualna godzina na zegarze (1-12)
+  let currentHour = 12;
+
+  // Przechowujemy sekwencję ruchów - godziny ustawione po każdym ruchu
+  const sequence = [];
+
+  // Poprawna kombinacja - przykładowo 4 → 9 → 3 (możesz zmienić)
+  const correctCombination = [4, 9, 3];
+
+  // Referencja do wskazówki
+  const hourHand = document.getElementById('hourHand');
+  const result = document.getElementById('result');
+
+  // Funkcja ustawiająca obrót wskazówki (każda godzina = 30 stopni)
+  function updateClock() {
+    const degrees = (currentHour % 12) * 30; // godziny modulo 12, by 12 = 0 stopni
+    hourHand.style.transform = `rotate(${degrees}deg)`;
+  }
+
+  // Funkcja sprawdzająca, czy sekwencja jest poprawna
+  function checkCombination() {
+    if(sequence.length !== correctCombination.length) {
+      return false;
+    }
+    for(let i = 0; i < correctCombination.length; i++) {
+      if(sequence[i] !== correctCombination[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Obsługa kliknięć
+  function turnLeft() {
+    currentHour = currentHour === 1 ? 12 : currentHour - 1;
+    sequence.push(currentHour);
+    updateClock();
+    checkAnswer();
+  }
+
+  function turnRight() {
+    currentHour = currentHour === 12 ? 1 : currentHour + 1;
+    sequence.push(currentHour);
+    updateClock();
+    checkAnswer();
+  }
+
+  // Sprawdzenie sekwencji i ewentualne odblokowanie sejfu
+  function checkAnswer() {
+    if(sequence.length === correctCombination.length) {
+      if(checkCombination()) {
+        result.style.color = "#44ff44";
+        result.innerText = "Safe unlocked! The code is: OPEN";
+        localStorage.setItem("puzzle9", "solved");
+      } else {
+        result.style.color = "#ff4444";
+        result.innerText = "Wrong combination. Try again.";
+        sequence.length = 0; // reset sekwencji po błędzie
+      }
+    } else {
+      result.innerText = `Moves: ${sequence.length} / ${correctCombination.length}`;
+    }
+  }
+
+  // Przy starcie strony
+  window.onload = () => {
+    updateClock();
+    if(localStorage.getItem("puzzle9") === "solved") {
+      result.style.color = "#44ff44";
+      result.innerText = "You have already unlocked the safe! The code is: OPEN";
+      // Blokujemy przyciski
+      document.getElementById('turnLeftBtn').disabled = true;
+      document.getElementById('turnRightBtn').disabled = true;
+    }
+  };
+
+  document.getElementById('turnLeftBtn').addEventListener('click', turnLeft);
+  document.getElementById('turnRightBtn').addEventListener('click', turnRight);
+</script>
 </body>
 </html>

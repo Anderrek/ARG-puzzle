@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Puzzle 9 - Combination Lock</title>
+<title>Puzzle 9 - Safe Dial</title>
 <style>
   body {
     background-color: #0d0d0d;
@@ -16,41 +16,67 @@
     height: 100vh;
     margin: 0;
     padding: 20px;
-    text-align: center;
+    user-select: none;
   }
   h1 {
     margin-bottom: 20px;
   }
-  .clock {
-    margin-bottom: 25px;
+  #clock {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border: 6px solid #444;
+    border-radius: 50%;
+    background: #111;
+    box-shadow: inset 0 0 20px #222;
   }
-  .clock svg {
-    width: 200px;
-    height: 200px;
+  /* godziny na tarczy */
+  .hour-mark {
+    position: absolute;
+    width: 2px;
+    height: 15px;
+    background: #eee;
+    top: 10px;
+    left: 50%;
+    transform-origin: center bottom;
   }
-  .hand {
-    stroke: #44ff44;
-    stroke-width: 4;
-    stroke-linecap: round;
-    transition: transform 0.3s ease;
-    transform-origin: 50% 50%;
+  /* cyfry */
+  .hour-number {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    color: #ccc;
+    font-weight: bold;
+    text-align: center;
+    user-select: none;
   }
-  .circle {
-    fill: none;
-    stroke: #555;
-    stroke-width: 8;
+  #hand {
+    position: absolute;
+    width: 6px;
+    height: 120px;
+    background: #44ff44;
+    top: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    border-radius: 3px;
+    cursor: grab;
+    transition: background-color 0.2s;
   }
-  .center {
-    fill: #44ff44;
+  #hand:active {
+    cursor: grabbing;
+    background-color: #88ff88;
   }
-  button {
+  button, input[type="text"] {
     font-family: 'Courier New', monospace;
     font-size: 18px;
-    padding: 10px 25px;
-    margin: 5px 10px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 4px;
+  }
+  button {
     background-color: #222;
     color: #eee;
-    border: none;
     cursor: pointer;
     transition: background-color 0.3s ease;
     user-select: none;
@@ -58,126 +84,149 @@
   button:hover {
     background-color: #444;
   }
+  input[type="text"] {
+    width: 300px;
+    color: #222;
+    border: 1px solid #555;
+  }
   #result {
-    margin-top: 20px;
+    margin-top: 15px;
     font-weight: bold;
     min-height: 24px;
   }
   .back-button {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    padding: 10px 16px;
-    font-size: 14px;
-    background-color: #111;
-    color: #ccc;
-    border: 1px solid #444;
-    cursor: pointer;
-    user-select: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 16px;
+      font-size: 14px;
+      background-color: #111;
+      color: #ccc;
+      border: 1px solid #444;
+      cursor: pointer;
+      user-select: none;
   }
 </style>
 </head>
 <body>
   <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
-  <h1>Puzzle 9 - Combination Lock</h1>
+  <h1>Puzzle 9 - Safe Dial</h1>
 
-  <div class="clock" aria-label="Combination lock clock">
-    <svg viewBox="0 0 100 100" role="img" aria-labelledby="title desc">
-      <title>Combination lock clock</title>
-      <desc>Clock face showing current hour</desc>
-      <circle class="circle" cx="50" cy="50" r="45"/>
-      <!-- Hour hand: rotate dynamically -->
-      <line id="hourHand" class="hand" x1="50" y1="50" x2="50" y2="20" />
-      <circle class="center" cx="50" cy="50" r="3" />
-    </svg>
+  <div id="clock" aria-label="Safe dial clock">
+    <!-- Hour marks -->
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(0deg); top:10px;"></div>
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(30deg); top:10px;"></div>
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(60deg); top:10px;"></div>
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(90deg); top:10px;"></div>
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(120deg); top:10px;"></div>
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(150deg); top:10px;"></div>
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(180deg); top:10px;"></div>
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(210deg); top:10px;"></div>
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(240deg); top:10px;"></div>
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(270deg); top:10px;"></div>
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(300deg); top:10px;"></div>
+    <div class="hour-mark" style="transform: translateX(-50%) rotate(330deg); top:10px;"></div>
+
+    <!-- Hour numbers -->
+    <div class="hour-number" style="top: 20px; left: 50%; transform: translate(-50%, 0);">12</div>
+    <div class="hour-number" style="top: 45px; left: 80%; transform: translate(-50%, 0);">1</div>
+    <div class="hour-number" style="top: 90px; left: 105%; transform: translate(-50%, 0);">2</div>
+    <div class="hour-number" style="top: 140px; left: 110%; transform: translate(-50%, 0);">3</div>
+    <div class="hour-number" style="top: 190px; left: 105%; transform: translate(-50%, 0);">4</div>
+    <div class="hour-number" style="top: 230px; left: 80%; transform: translate(-50%, 0);">5</div>
+    <div class="hour-number" style="top: 255px; left: 50%; transform: translate(-50%, 0);">6</div>
+    <div class="hour-number" style="top: 230px; left: 20%; transform: translate(-50%, 0);">7</div>
+    <div class="hour-number" style="top: 190px; left: 10%; transform: translate(-50%, 0);">8</div>
+    <div class="hour-number" style="top: 140px; left: 5%; transform: translate(-50%, 0);">9</div>
+    <div class="hour-number" style="top: 90px; left: 10%; transform: translate(-50%, 0);">10</div>
+    <div class="hour-number" style="top: 45px; left: 20%; transform: translate(-50%, 0);">11</div>
+
+    <!-- Hand -->
+    <div id="hand" style="transform: rotate(0deg);"></div>
   </div>
 
-  <div>
-    <button id="turnLeftBtn">Turn Left (−1 hour)</button>
-    <button id="turnRightBtn">Turn Right (+1 hour)</button>
-  </div>
-
+  <input type="text" id="answerInput" placeholder="Enter the code (e.g. 493)" autocomplete="off" />
+  <button onclick="checkAnswer()">Open Safe</button>
   <div id="result"></div>
 
 <script>
-  // Aktualna godzina na zegarze (1-12)
-  let currentHour = 12;
-
-  // Przechowujemy sekwencję ruchów - godziny ustawione po każdym ruchu
-  const sequence = [];
-
-  // Poprawna kombinacja - przykładowo 4 → 9 → 3 (możesz zmienić)
-  const correctCombination = [4, 9, 3];
-
-  // Referencja do wskazówki
-  const hourHand = document.getElementById('hourHand');
+  const hand = document.getElementById('hand');
+  const clock = document.getElementById('clock');
   const result = document.getElementById('result');
+  const answerInput = document.getElementById('answerInput');
 
-  // Funkcja ustawiająca obrót wskazówki (każda godzina = 30 stopni)
-  function updateClock() {
-    const degrees = (currentHour % 12) * 30; // godziny modulo 12, by 12 = 0 stopni
-    hourHand.style.transform = `rotate(${degrees}deg)`;
+  let dragging = false;
+
+  // Angle in degrees, 0 = 12 o'clock
+  let currentAngle = 0;
+
+  function getAngle(cx, cy, ex, ey) {
+    let dy = ey - cy;
+    let dx = ex - cx;
+    let theta = Math.atan2(dy, dx); // radians
+    let angle = theta * 180 / Math.PI; // degrees
+    angle = angle + 90; // rotate so 0 is at 12 o'clock
+    if (angle < 0) angle += 360;
+    return angle;
   }
 
-  // Funkcja sprawdzająca, czy sekwencja jest poprawna
-  function checkCombination() {
-    if(sequence.length !== correctCombination.length) {
-      return false;
+  hand.addEventListener('mousedown', (e) => {
+    dragging = true;
+    e.preventDefault();
+  });
+
+  window.addEventListener('mouseup', (e) => {
+    if (dragging) {
+      dragging = false;
+      // Snap to nearest 30 degrees (one hour)
+      currentAngle = Math.round(currentAngle / 30) * 30;
+      hand.style.transform = `rotate(${currentAngle}deg)`;
     }
-    for(let i = 0; i < correctCombination.length; i++) {
-      if(sequence[i] !== correctCombination[i]) {
-        return false;
-      }
-    }
-    return true;
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const rect = clock.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const angle = getAngle(cx, cy, e.clientX, e.clientY);
+    currentAngle = angle;
+    hand.style.transform = `rotate(${angle}deg)`;
+  });
+
+  // Map angle to hour number (12 at 0deg, 1 at 30deg, ..., 11 at 330deg)
+  function angleToHour(angle) {
+    let hour = Math.round(angle / 30);
+    if(hour === 12) hour = 0;
+    return hour === 0 ? 12 : hour;
   }
 
-  // Obsługa kliknięć
-  function turnLeft() {
-    currentHour = currentHour === 1 ? 12 : currentHour - 1;
-    sequence.push(currentHour);
-    updateClock();
-    checkAnswer();
-  }
+  // Correct combination: 4, 9, 3 (input is string "493")
+  const correctCode = "493";
 
-  function turnRight() {
-    currentHour = currentHour === 12 ? 1 : currentHour + 1;
-    sequence.push(currentHour);
-    updateClock();
-    checkAnswer();
-  }
-
-  // Sprawdzenie sekwencji i ewentualne odblokowanie sejfu
   function checkAnswer() {
-    if(sequence.length === correctCombination.length) {
-      if(checkCombination()) {
-        result.style.color = "#44ff44";
-        result.innerText = "Safe unlocked! The code is: OPEN";
-        localStorage.setItem("puzzle9", "solved");
-      } else {
-        result.style.color = "#ff4444";
-        result.innerText = "Wrong combination. Try again.";
-        sequence.length = 0; // reset sekwencji po błędzie
-      }
+    // Get currently selected hour
+    const selectedHour = angleToHour(currentAngle);
+    // We ask user to input code manually, no need to use selectedHour here
+    const userAnswer = answerInput.value.trim();
+
+    if(userAnswer === correctCode) {
+      localStorage.setItem("puzzle9", "solved");
+      result.style.color = "#44ff44";
+      result.innerText = "Safe unlocked! Puzzle solved.";
     } else {
-      result.innerText = `Moves: ${sequence.length} / ${correctCombination.length}`;
+      result.style.color = "#ff4444";
+      result.innerText = "Wrong code. Try again.";
     }
   }
 
-  // Przy starcie strony
   window.onload = () => {
-    updateClock();
     if(localStorage.getItem("puzzle9") === "solved") {
       result.style.color = "#44ff44";
-      result.innerText = "You have already unlocked the safe! The code is: OPEN";
-      // Blokujemy przyciski
-      document.getElementById('turnLeftBtn').disabled = true;
-      document.getElementById('turnRightBtn').disabled = true;
+      result.innerText = "You have already solved this puzzle!";
+      answerInput.value = correctCode;
     }
   };
-
-  document.getElementById('turnLeftBtn').addEventListener('click', turnLeft);
-  document.getElementById('turnRightBtn').addEventListener('click', turnRight);
 </script>
 </body>
 </html>

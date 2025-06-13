@@ -2,14 +2,36 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Puzzle 8 - Printing Error</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Puzzle 8</title>
 <style>
   body {
     background-color: #0d0d0d;
     color: #eee;
     font-family: 'Courier New', monospace;
-    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+  .lyrics {
+    max-width: 600px;
+    background-color: #111;
+    border: 1px solid #333;
+    padding: 20px;
+    font-size: 18px;
+    line-height: 1.4;
     white-space: pre-wrap;
+    font-weight: normal;
+    margin-bottom: 20px;
+    user-select: none;
   }
   .different-font {
     font-family: 'Georgia', serif;
@@ -21,11 +43,53 @@
   .number-substitution {
     font-weight: bold;
   }
+  input[type="text"], button {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 4px;
+  }
+  input[type="text"] {
+    width: 300px;
+    color: #222;
+    border: 1px solid #555;
+  }
+  button {
+    background-color: #222;
+    color: #eee;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button:hover {
+    background-color: #444;
+  }
+  #result {
+    margin-top: 15px;
+    font-weight: bold;
+    min-height: 24px;
+  }
+  .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 16px;
+      font-size: 14px;
+      background-color: #111;
+      color: #ccc;
+      border: 1px solid #444;
+      cursor: pointer;
+      user-select: none;
+  }
 </style>
 </head>
 <body>
-  <h1>Puzzle 8 - Printing Error</h1>
-  <p>
+  <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+  <h1>Puzzle 8</h1>
+
+  <div class="lyrics">
 I that am <span class="different-font">lost</span>,oh who will <span class="uppercase">FIND</span> me?<br><br>
 
 Deep down below the old beech tree<br><br>
@@ -63,11 +127,11 @@ My soul seek the shade of my Willow's bloom<br><br>
 Inside, brother mine - <br><br>
 
 Let death make a room.
-  </p>
+  </div>
 
-  <p>Enter the three hidden words (comma separated):</p>
-  <input type="text" id="answerInput" placeholder="Enter words here" autocomplete="off" />
-  <button onclick="checkAnswer()">Check Answer</button>
+  <input type="text" id="answerInput" placeholder="Enter the three hidden words, comma separated" autocomplete="off" />
+  <button onclick="checkAnswer()">Submit</button>
+
   <div id="result"></div>
 
 <script>

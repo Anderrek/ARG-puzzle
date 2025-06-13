@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Puzzle 1</title>
   <style>
     body {
       background-color: #0d0d0d;
-      color: #ffffff;
+      color: #fff;
       font-family: 'Courier New', monospace;
       display: flex;
       flex-direction: column;
@@ -19,97 +19,128 @@
     }
 
     h1 {
+      margin-bottom: 10px;
+    }
+
+    .cipher {
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+
+    .input {
+      display: flex;
+      gap: 10px;
       margin-bottom: 20px;
     }
 
-    .cipher-box {
-      background-color: #1a1a1a;
-      border: 2px solid #333;
-      padding: 20px;
-      margin-bottom: 30px;
-      font-size: 20px;
+    .input input {
+      width: 40px;
+      height: 40px;
+      font-size: 24px;
       text-align: center;
+      background: #111;
+      color: #fff;
+      border: 1px solid #444;
     }
 
     .keyboard {
       display: grid;
       grid-template-columns: repeat(10, 40px);
-      grid-gap: 10px;
+      gap: 5px;
       margin-bottom: 20px;
     }
 
     .key {
-      background-color: #333;
+      background: #1a1a1a;
+      border: 1px solid #333;
       color: #fff;
-      border: none;
+      text-align: center;
       padding: 10px;
-      font-size: 16px;
       cursor: pointer;
-      transition: 0.2s;
+      user-select: none;
     }
 
     .key:hover {
-      background-color: #555;
+      background: #444;
     }
 
-    .answer-box {
+    .message {
       margin-top: 10px;
       font-size: 18px;
-      letter-spacing: 2px;
+      color: #44ff44;
     }
 
-    .submit {
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #111;
-      border: 2px solid #444;
-      color: #fff;
+    .back {
+      margin-top: 20px;
+      color: #999;
+      text-decoration: underline;
       cursor: pointer;
     }
+
   </style>
 </head>
 <body>
   <h1>Puzzle 1</h1>
-  <div class="cipher-box">
-    Cipher: **TGRuZG9u**
+  <div class="cipher">Ciphered: <strong>TGRuZG9u</strong></div>
+  <div class="input" id="inputArea">
+    <input maxlength="1" />
+    <input maxlength="1" />
+    <input maxlength="1" />
+    <input maxlength="1" />
+    <input maxlength="1" />
+    <input maxlength="1" />
   </div>
   <div class="keyboard" id="keyboard"></div>
-  <div class="answer-box" id="answerBox"></div>
-  <button class="submit" onclick="submitAnswer()">Submit</button>
+  <div class="message" id="message"></div>
+  <div class="back" onclick="goBack()">← Back to main</div>
 
   <script>
-    const keys = "QWERTYUIOPASDFGHJKLZXCVBNM".split("");
-    const keyboard = document.getElementById("keyboard");
-    const answerBox = document.getElementById("answerBox");
-    let currentAnswer = "";
+    const answer = "LONDON";
+    const inputBoxes = document.querySelectorAll('#inputArea input');
+    const keyboard = document.getElementById('keyboard');
+    const message = document.getElementById('message');
 
-    keys.forEach(letter => {
-      const btn = document.createElement("button");
-      btn.innerText = letter;
+    const keys = "QWERTYUIOPASDFGHJKLZXCVBNM".split("");
+
+    keys.forEach(char => {
+      const btn = document.createElement("div");
       btn.className = "key";
-      btn.onclick = () => {
-        currentAnswer += letter;
-        answerBox.innerText = currentAnswer;
-      };
+      btn.textContent = char;
+      btn.onclick = () => typeChar(char);
       keyboard.appendChild(btn);
     });
 
-    function submitAnswer() {
-      if (currentAnswer.toLowerCase() === "london") {
+    function typeChar(char) {
+      for (let box of inputBoxes) {
+        if (box.value === "") {
+          box.value = char;
+          break;
+        }
+      }
+      checkAnswer();
+    }
+
+    function checkAnswer() {
+      const userInput = Array.from(inputBoxes).map(i => i.value).join('').toUpperCase();
+      if (userInput.length === 6 && userInput === answer) {
+        message.textContent = "Correct!";
         localStorage.setItem("puzzle1", "solved");
-        window.location.href = "index.html";
-      } else {
-        alert("Wrong answer. Try again.");
-        currentAnswer = "";
-        answerBox.innerText = "";
+      } else if (userInput.length === 6) {
+        message.textContent = "Incorrect. Try again.";
       }
     }
 
-    window.onload = () => {
-      if (localStorage.getItem("puzzle1") === "solved") {
-        window.location.href = "index.html";
-      }
-    };
+    function goBack() {
+      window.location.href = "index.html";
+    }
+
+    // Autofill if already solved
+    if (localStorage.getItem("puzzle1") === "solved") {
+      message.textContent = "Already solved.";
+      answer.split("").forEach((char, idx) => {
+        inputBoxes[idx].value = char;
+      });
+    }
   </script>
 </body>
 </html>

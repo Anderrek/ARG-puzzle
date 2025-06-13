@@ -136,62 +136,83 @@
 <script>
   const hand = document.getElementById('hand');
   const clock = document.getElementById('clock');
-  const codeDisplay = document.getElementById('codeDisplay');
+  const result = document.getElementById('result');
 
   let dragging = false;
   let currentAngle = 0;
-  let enteredCode = [];
+  let codeSequence = [];
+  const correctCode = ["4", "9", "3"];
 
   function getAngle(cx, cy, ex, ey) {
     let dy = ey - cy;
     let dx = ex - cx;
     let theta = Math.atan2(dy, dx);
-    let angle = theta * 180 / Math.PI;
-    angle = angle + 90;
+    let angle = theta * 180 / Math.PI + 90;
     if (angle < 0) angle += 360;
     return angle;
   }
 
-  // Zamiana kąta na cyfrę od 1 do 12
   function angleToHour(angle) {
-    // Każde 30 stopni = 1 godzina, 0 stopni = 12
-    let hour = Math.round(angle / 30);
-    if(hour === 0) hour = 12;
-    if(hour > 12) hour = hour % 12;
-    return hour;
+    return Math.round(angle / 30) % 12 || 12;
+  }
+
+  function recordStep(hour) {
+    codeSequence.push(hour.toString());
+    if (codeSequence.length === 3) {
+      checkSequence();
+    }
+  }
+
+  function checkSequence() {
+    if (codeSequence.join('') === correctCode.join('')) {
+      result.style.color = "#44ff44";
+      result.innerText = "Safe unlocked! Puzzle solved.";
+      localStorage.setItem("puzzle9", "solved");
+    } else {
+      result.style.color = "#ff4444";
+      result.innerText = "Wrong code. Try again.";
+      setTimeout(() => {
+        result.innerText = "";
+        codeSequence = [];
+      }, 1500);
+    }
   }
 
   hand.addEventListener('mousedown', (e) => {
-  dragging = true;
-  e.preventDefault();
-});
+    dragging = true;
+    e.preventDefault();
+  });
 
-document.addEventListener('mouseup', () => {
-  if (dragging) {
-    dragging = false;
-    currentAngle = Math.round(currentAngle / 30) * 30;
-    hand.style.transform = `rotate(${currentAngle}deg)`;
+  window.addEventListener('mouseup', (e) => {
+    if (dragging) {
+      dragging = false;
+      const rect = clock.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const angle = getAngle(cx, cy, e.clientX, e.clientY);
+      currentAngle = Math.round(angle / 30) * 30;
+      hand.style.transform = `rotate(${currentAngle}deg)`;
+      const selectedHour = angleToHour(currentAngle);
+      recordStep(selectedHour);
+    }
+  });
 
-    const digit = angleToHour(currentAngle);
-    enteredCode.push(digit);
-    updateCodeDisplay();
-  }
-});
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const rect = clock.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const angle = getAngle(cx, cy, e.clientX, e.clientY);
+    currentAngle = angle;
+    hand.style.transform = `rotate(${angle}deg)`;
+  });
 
-document.addEventListener('mousemove', (e) => {
-  if (!dragging) return;
-  const rect = clock.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + rect.height / 2;
-  const angle = getAngle(cx, cy, e.clientX, e.clientY);
-  currentAngle = angle;
-  hand.style.transform = `rotate(${angle}deg)`;
-});
-
-
-  function updateCodeDisplay() {
-    codeDisplay.textContent = 'Code: ' + enteredCode.join('');
-  }
+  window.onload = () => {
+    if (localStorage.getItem("puzzle9") === "solved") {
+      result.style.color = "#44ff44";
+      result.innerText = "You have already solved this puzzle!";
+    }
+  };
 </script>
 </body>
 </html>

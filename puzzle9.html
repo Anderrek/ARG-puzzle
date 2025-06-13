@@ -162,33 +162,32 @@
   }
 
   hand.addEventListener('mousedown', (e) => {
-    dragging = true;
-    e.preventDefault();
-  });
+  dragging = true;
+  e.preventDefault();
+});
 
-  window.addEventListener('mouseup', () => {
-    if (dragging) {
-      dragging = false;
-      // Zaokrąglamy kąt do najbliższej godziny
-      currentAngle = Math.round(currentAngle / 30) * 30;
-      hand.style.transform = `rotate(${currentAngle}deg)`;
+document.addEventListener('mouseup', () => {
+  if (dragging) {
+    dragging = false;
+    currentAngle = Math.round(currentAngle / 30) * 30;
+    hand.style.transform = `rotate(${currentAngle}deg)`;
 
-      // Zamieniamy kąt na cyfrę i zapisujemy do kodu
-      const digit = angleToHour(currentAngle);
-      enteredCode.push(digit);
-      updateCodeDisplay();
-    }
-  });
+    const digit = angleToHour(currentAngle);
+    enteredCode.push(digit);
+    updateCodeDisplay();
+  }
+});
 
-  window.addEventListener('mousemove', (e) => {
-    if (!dragging) return;
-    const rect = clock.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const angle = getAngle(cx, cy, e.clientX, e.clientY);
-    currentAngle = angle;
-    hand.style.transform = `rotate(${angle}deg)`;
-  });
+document.addEventListener('mousemove', (e) => {
+  if (!dragging) return;
+  const rect = clock.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const angle = getAngle(cx, cy, e.clientX, e.clientY);
+  currentAngle = angle;
+  hand.style.transform = `rotate(${angle}deg)`;
+});
+
 
   function updateCodeDisplay() {
     codeDisplay.textContent = 'Code: ' + enteredCode.join('');

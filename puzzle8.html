@@ -1,88 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Puzzle 8 - Sherlock ARG</title>
-  <style>
-    body {
-      background-color: #0d0d0d;
-      color: #fff;
-      font-family: 'Courier New', monospace;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    h1 {
-      font-size: 2em;
-      margin: 0;
-      color: #a17f12;
-      letter-spacing: 3px;
-    }
-
-    main {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .content {
-      background-color: #1a1a1a;
-      border: 2px solid #444;
-      padding: 30px;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 0 10px #a17f12;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 1.2em;
-      line-height: 1.5em;
-      user-select: none;
-    }
-
-    nav {
-      margin-top: 40px;
-      text-align: center;
-    }
-
-    nav a {
-      color: #a17f12;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1em;
-      border: 2px solid #a17f12;
-      padding: 10px 20px;
-      border-radius: 6px;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    nav a:hover {
-      background-color: #a17f12;
-      color: #0d0d0d;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>Puzzle 8 - Printing Error</title>
+<style>
+  body {
+    background-color: #0d0d0d;
+    color: #eee;
+    font-family: 'Courier New', monospace;
+    padding: 30px;
+    white-space: pre-wrap;
+  }
+  .different-font {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+  }
+  .uppercase {
+    text-transform: uppercase;
+  }
+  .number-substitution {
+    font-weight: bold;
+  }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Puzzle 8</h1>
-  </header>
-  <main>
-    <div class="content">
-      <p>Tu znajdzie się treść zagadki. Wkrótce dodamy tu coś ciekawego...</p>
-    </div>
-    <nav>
-      <a href="index.html">← Powrót do centralnej strony</a>
-    </nav>
-  </main>
+  <h1>Puzzle 8 - Printing Error</h1>
+  <p>
+I that am <span class="different-font">lost</span>,oh who will <span class="uppercase">FIND</span> me?<br><br>
+
+Deep down below the old beech tree<br><br>
+
+Help succour me now the east winds blow<br><br>
+
+Sixteen by six ,<span class="number-substitution">br0th3r</span>,and under we go!<br><br>
+
+Be not afraid to walk in the shade<br><br>
+
+Save one save all,come try<br><br>
+
+My steps -five by seven<br><br>
+
+Life is closer to heaven<br><br>
+
+Look down with dark gaze,from on high<br><br>
+
+Before he was gone ,right back over my hill<br><br>
+
+Who now will find him?<br><br>
+
+Why, nobody will <br><br>
+
+Doom shall i bring to him,that am queen<br><br>
+
+Lost forever, nine by nineteen<br><br>
+
+Without your love, he'll be gone before <br><br>
+
+Save pity for strangers, show love the door.<br><br>
+
+My soul seek the shade of my Willow's bloom<br><br>
+
+Inside, brother mine - <br><br>
+
+Let death make a room.
+  </p>
+
+  <p>Enter the three hidden words (comma separated):</p>
+  <input type="text" id="answerInput" placeholder="Enter words here" autocomplete="off" />
+  <button onclick="checkAnswer()">Check Answer</button>
+  <div id="result"></div>
+
+<script>
+  const answers = ["lost", "find", "brother"];
+
+  function checkAnswer() {
+    const input = document.getElementById('answerInput').value.toLowerCase().replace(/\s/g, '');
+    const message = document.getElementById('result');
+    const userWords = input.split(',');
+
+    if(userWords.length !== 3) {
+      message.style.color = "#ff4444";
+      message.innerText = "Please enter exactly three words, separated by commas.";
+      return;
+    }
+
+    const trimmedWords = userWords.map(w => w.trim());
+
+    // Normalize 'brother' from number-substitution 'br0th3r'
+    const normalize = w => w.replace(/0/g, 'o').replace(/3/g, 'e');
+
+    const normalizedUserWords = trimmedWords.map(normalize);
+
+    const isCorrect = answers.every(word => normalizedUserWords.includes(word));
+
+    if(isCorrect) {
+      message.style.color = "#44ff44";
+      message.innerText = "Correct! Puzzle solved.";
+      localStorage.setItem("puzzle8", "solved");
+    } else {
+      message.style.color = "#ff4444";
+      message.innerText = "Try again.";
+    }
+  }
+
+  window.onload = () => {
+    if(localStorage.getItem("puzzle8") === "solved") {
+      const message = document.getElementById('result');
+      message.style.color = "#44ff44";
+      message.innerText = "You have already solved this puzzle!";
+      document.getElementById('answerInput').value = answers.join(', ');
+    }
+  };
+</script>
 </body>
 </html>

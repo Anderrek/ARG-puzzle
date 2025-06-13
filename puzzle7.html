@@ -1,88 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Puzzle 7 - Sherlock ARG</title>
-  <style>
-    body {
-      background-color: #0d0d0d;
-      color: #fff;
-      font-family: 'Courier New', monospace;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    h1 {
-      font-size: 2em;
-      margin: 0;
-      color: #a17f12;
-      letter-spacing: 3px;
-    }
-
-    main {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .content {
-      background-color: #1a1a1a;
-      border: 2px solid #444;
-      padding: 30px;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 0 10px #a17f12;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 1.2em;
-      line-height: 1.5em;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Puzzle 7</title>
+<style>
+  body {
+    background-color: #0d0d0d;
+    color: #eee;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+  button, input[type="text"] {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 4px;
+  }
+  button {
+    background-color: #222;
+    color: #eee;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button:hover {
+    background-color: #444;
+  }
+  input[type="text"] {
+    width: 300px;
+    color: #222;
+    border: 1px solid #555;
+  }
+  #result {
+    margin-top: 15px;
+    font-weight: bold;
+    min-height: 24px;
+  }
+  .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 16px;
+      font-size: 14px;
+      background-color: #111;
+      color: #ccc;
+      border: 1px solid #444;
+      cursor: pointer;
       user-select: none;
-    }
-
-    nav {
-      margin-top: 40px;
-      text-align: center;
-    }
-
-    nav a {
-      color: #a17f12;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1em;
-      border: 2px solid #a17f12;
-      padding: 10px 20px;
-      border-radius: 6px;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    nav a:hover {
-      background-color: #a17f12;
-      color: #0d0d0d;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Puzzle 7</h1>
-  </header>
-  <main>
-    <div class="content">
-      <p>Tu znajdzie się treść zagadki. Wkrótce dodamy tu coś ciekawego...</p>
-    </div>
-    <nav>
-      <a href="index.html">← Powrót do centralnej strony</a>
-    </nav>
-  </main>
+  <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+  <h1>Puzzle 7</h1>
+
+  <button id="playBtn">Play</button>
+  <audio id="audio" src="audio/puzzle7.mp3"></audio>
+
+  <input type="text" id="answerInput" placeholder="Enter your answer" autocomplete="off" />
+
+  <button onclick="checkAnswer()">Submit</button>
+
+  <div id="result"></div>
+
+<script>
+  const audio = document.getElementById('audio');
+  const playBtn = document.getElementById('playBtn');
+
+  playBtn.addEventListener('click', () => {
+    audio.play();
+  });
+
+  const correctAnswer = "YOUR_ANSWER_HERE".toLowerCase();
+
+  function checkAnswer() {
+    const input = document.getElementById('answerInput').value.trim().toLowerCase();
+    const message = document.getElementById('result');
+    if(input === correctAnswer) {
+      localStorage.setItem("puzzle7", "solved");
+      message.style.color = "#44ff44";
+      message.innerText = "Correct! Puzzle solved.";
+    } else {
+      message.style.color = "#ff4444";
+      message.innerText = "Try again.";
+    }
+  }
+
+  window.onload = () => {
+    if(localStorage.getItem("puzzle7") === "solved") {
+      const message = document.getElementById('result');
+      message.style.color = "#44ff44";
+      message.innerText = "You have already solved this puzzle!";
+      document.getElementById('answerInput').value = correctAnswer;
+    }
+  };
+</script>
 </body>
 </html>

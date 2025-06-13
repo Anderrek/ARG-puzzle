@@ -174,12 +174,12 @@
 
   function checkAnswer() {
     const input = document.getElementById('answerInput').value.trim().toUpperCase();
-    if(input === correctAnswer) {
-      document.getElementById('result').textContent = "Correct! Puzzle solved.";
-      localStorage.setItem('puzzle3Solved', 'true');
-    } else {
-      document.getElementById('result').textContent = "Try again.";
-    }
+    if (input === correctAnswer) {
+        localStorage.setItem("puzzle2", "solved");
+        message.innerText = "Correct! Puzzle solved.";
+      } else {
+        message.innerText = "Try again.";
+      }
   }
 
   window.onload = () => {

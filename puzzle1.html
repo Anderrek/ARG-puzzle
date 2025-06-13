@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Puzzle 1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zagadka 1 - Szyfr Cezara + Base64</title>
   <style>
     body {
       background-color: #0d0d0d;
@@ -12,152 +12,152 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
+      padding: 20px;
     }
-
     h1 {
       margin-bottom: 20px;
     }
-
-    .puzzle {
-      text-align: center;
-      margin-bottom: 30px;
-      max-width: 600px;
-    }
-
-    .input-display {
-      margin: 20px auto;
-      font-size: 24px;
-      border-bottom: 2px solid #fff;
-      padding: 10px;
-      min-width: 200px;
-      min-height: 30px;
-    }
-
     .keyboard {
+      margin-top: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 10px;
     }
-
     .key-row {
       display: flex;
       justify-content: center;
-      margin: 5px 0;
+      gap: 6px;
     }
-
-    .key {
-      background-color: #1a1a1a;
-      border: 1px solid #333;
-      color: #fff;
-      padding: 10px 14px;
-      margin: 2px;
+    button.key {
+      background-color: #222;
+      border: 1px solid #555;
+      color: #eee;
       font-size: 18px;
+      padding: 12px 14px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      user-select: none;
+      border-radius: 5px;
+      min-width: 38px;
+      transition: background-color 0.2s ease;
     }
-
-    .key:hover {
-      background-color: #333;
+    button.key:hover {
+      background-color: #444;
     }
-
-    .submit-btn, .back-btn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 18px;
+    #answer {
+      margin-top: 25px;
       background-color: #111;
-      color: #fff;
-      border: 2px solid #444;
-      cursor: pointer;
-    }
-
-    .back-btn {
-      margin-top: 10px;
-    }
-
-    .message {
-      margin-top: 20px;
-      font-size: 16px;
+      border: 1px solid #333;
+      padding: 10px 15px;
+      font-size: 22px;
+      letter-spacing: 3px;
+      min-width: 220px;
+      text-align: center;
+      user-select: none;
+      border-radius: 6px;
       color: #44ff44;
+      font-weight: bold;
+      min-height: 40px;
+    }
+    .btn-container {
+      margin-top: 30px;
+      width: 240px;
+      display: flex;
+      justify-content: space-between;
+    }
+    button.control {
+      background-color: #333;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.2s ease;
+      user-select: none;
+    }
+    button.control:hover {
+      background-color: #555;
     }
   </style>
 </head>
 <body>
-  <h1>Puzzle 1</h1>
-  <div class="puzzle">
-    <p>Find the hidden word using the ciphered text:</p>
-    <p><em>"GSRH RH Z HVXIVG"</em></p>
-    <div class="input-display" id="inputDisplay"></div>
-  </div>
+  <h1>Zagadka 1 - Szyfr Cezara + Base64</h1>
 
   <div class="keyboard">
-    <div class="key-row" id="row1">
-      <button class="key" onclick="pressKey('Q')">Q</button>
-      <button class="key" onclick="pressKey('W')">W</button>
-      <button class="key" onclick="pressKey('E')">E</button>
-      <button class="key" onclick="pressKey('R')">R</button>
-      <button class="key" onclick="pressKey('T')">T</button>
-      <button class="key" onclick="pressKey('Y')">Y</button>
-      <button class="key" onclick="pressKey('U')">U</button>
-      <button class="key" onclick="pressKey('I')">I</button>
-      <button class="key" onclick="pressKey('O')">O</button>
-      <button class="key" onclick="pressKey('P')">P</button>
+    <div class="key-row" style="justify-content: center;">
+      <button class="key">Q</button>
+      <button class="key">W</button>
+      <button class="key">E</button>
+      <button class="key">R</button>
+      <button class="key">T</button>
+      <button class="key">Y</button>
+      <button class="key">U</button>
+      <button class="key">I</button>
+      <button class="key">O</button>
+      <button class="key">P</button>
     </div>
-    <div class="key-row" id="row2">
-      <button class="key" onclick="pressKey('A')">A</button>
-      <button class="key" onclick="pressKey('S')">S</button>
-      <button class="key" onclick="pressKey('D')">D</button>
-      <button class="key" onclick="pressKey('F')">F</button>
-      <button class="key" onclick="pressKey('G')">G</button>
-      <button class="key" onclick="pressKey('H')">H</button>
-      <button class="key" onclick="pressKey('J')">J</button>
-      <button class="key" onclick="pressKey('K')">K</button>
-      <button class="key" onclick="pressKey('L')">L</button>
+    <div class="key-row" style="justify-content: center;">
+      <button class="key">A</button>
+      <button class="key">S</button>
+      <button class="key">D</button>
+      <button class="key">F</button>
+      <button class="key">G</button>
+      <button class="key">H</button>
+      <button class="key">J</button>
+      <button class="key">K</button>
+      <button class="key">L</button>
     </div>
-    <div class="key-row" id="row3">
-      <button class="key" onclick="pressKey('Z')">Z</button>
-      <button class="key" onclick="pressKey('X')">X</button>
-      <button class="key" onclick="pressKey('C')">C</button>
-      <button class="key" onclick="pressKey('V')">V</button>
-      <button class="key" onclick="pressKey('B')">B</button>
-      <button class="key" onclick="pressKey('N')">N</button>
-      <button class="key" onclick="pressKey('M')">M</button>
-      <button class="key" onclick="pressKey('←')">←</button>
+    <div class="key-row" style="justify-content: center;">
+      <button class="key">Z</button>
+      <button class="key">X</button>
+      <button class="key">C</button>
+      <button class="key">V</button>
+      <button class="key">B</button>
+      <button class="key">N</button>
+      <button class="key">M</button>
+      <button class="key">0</button>
+      <button class="key">1</button>
+      <button class="key">2</button>
+      <button class="key">3</button>
+      <button class="key">4</button>
+      <button class="key">5</button>
+      <button class="key">6</button>
+      <button class="key">7</button>
+      <button class="key">8</button>
+      <button class="key">9</button>
     </div>
   </div>
 
-  <button class="submit-btn" onclick="checkAnswer()">Submit</button>
-  <div class="message" id="message"></div>
+  <div id="answer"></div>
 
-  <button class="back-btn" onclick="goBack()">Back to Main Page</button>
+  <div class="btn-container">
+    <button class="control" id="clearBtn">Wyczyść</button>
+    <button class="control" id="submitBtn">Sprawdź</button>
+    <button class="control" onclick="window.location.href='index.html'">Powrót</button>
+  </div>
 
   <script>
-    let currentInput = "";
+    const answerDiv = document.getElementById('answer');
+    const keys = document.querySelectorAll('.key');
 
-    function pressKey(char) {
-      if (char === "←") {
-        currentInput = currentInput.slice(0, -1);
-      } else {
-        currentInput += char;
-      }
-      document.getElementById("inputDisplay").innerText = currentInput;
-    }
+    keys.forEach(key => {
+      key.addEventListener('click', () => {
+        if(answerDiv.textContent.length < 20) { // max length safeguard
+          answerDiv.textContent += key.textContent;
+        }
+      });
+    });
 
-    function checkAnswer() {
-      const answer = "THISISASECRET";
-      if (currentInput.toUpperCase() === answer) {
-        document.getElementById("message").innerText = "Correct! Puzzle solved.";
-        localStorage.setItem("puzzle1", "solved");
-      } else {
-        document.getElementById("message").innerText = "Try again.";
-      }
-    }
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      answerDiv.textContent = '';
+    });
 
-    function goBack() {
-      window.location.href = "index.html";
-    }
+    document.getElementById('submitBtn').addEventListener('click', () => {
+      const userAnswer = answerDiv.textContent;
+      // Tu w przyszłości można dodać sprawdzanie odpowiedzi
+      alert('Odpowiedź przesłana: ' + userAnswer);
+    });
   </script>
 </body>
 </html>

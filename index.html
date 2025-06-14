@@ -208,7 +208,6 @@
     function markSolved(id) {
       localStorage.setItem(`puzzle${id}`, "solved");
       updateStatus(id);
-      checkSolveButton();
     }
 
     function updateStatus(id) {
@@ -216,12 +215,6 @@
       status.innerText = 'SOLVED';
       status.parentElement.classList.add('solved');
       solved.add(id);
-    }
-
-    function checkSolveButton() {
-      if (solved.size === 9) {
-        document.getElementById("solveBtn").classList.add("active");
-      }
     }
 
     function downloadFinalImage() {
@@ -262,7 +255,6 @@
         updateStatus(i);
       }
     }
-    checkSolveButton();
   </script>
 </body>
 </html>

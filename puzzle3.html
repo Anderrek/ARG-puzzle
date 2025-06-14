@@ -182,7 +182,15 @@
     message.innerText = "Try again.";
   }
 }
-
+window.onload = () => {
+    if(localStorage.getItem("puzzle3") === "solved") {
+      const message = document.getElementById('result');
+      message.style.color = "#44ff44";
+      message.innerText = "You have already solved this puzzle!";
+      document.getElementById('answerInput').value = correctAnswer;
+    }
+  };
+  
 </script>
 
 </body>

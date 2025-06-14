@@ -92,6 +92,7 @@
     }
 
     .solve-button {
+      visibility: hidden;
       margin-top: 30px;
       padding: 10px 20px;
       font-size: 18px;
@@ -103,6 +104,11 @@
       transform: scale(0.95);
       animation: fadeIn 2s ease forwards;
       animation-delay: 1s;
+    }
+
+    .solve-button.visible {
+      visibility: visible;
+      opacity: 1;
     }
 
     
@@ -118,16 +124,6 @@
       transform: scale(0.95);
       animation: fadeIn 2s ease forwards;
       animation-delay: 1s;
-    }
-
-    .solve-button.active {
-      display: block;
-      animation: pulse 2s infinite;
-    }
-
-    .reset-button {
-      background-color: #440000;
-      margin-top: 10px;
     }
 
     .reset-button:hover {
@@ -216,11 +212,12 @@ function checkSolveButton() {
 
   const solveBtn = document.getElementById("solveBtn");
   if (allSolved) {
-    solveBtn.classList.add("active");
+    solveBtn.classList.add("visible");
   } else {
-    solveBtn.classList.remove("active");
+    solveBtn.classList.remove("visible");
   }
 }
+
 
 function downloadFinalImage() {
   window.location.href = 'final_clue.png';

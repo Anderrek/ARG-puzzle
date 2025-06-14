@@ -194,10 +194,22 @@
     }
 
     function checkSolveButton() {
-      if (solved.size === 9) {
-        document.getElementById("solveBtn").classList.add("active");
-      }
+  let allSolved = true;
+  for (let i = 1; i <= 9; i++) {
+    if (localStorage.getItem(`puzzle${i}`) !== "solved") {
+      allSolved = false;
+      break;
     }
+  }
+
+  const solveBtn = document.getElementById("solveBtn");
+  if (allSolved) {
+    solveBtn.classList.add("active");
+  } else {
+    solveBtn.classList.remove("active");
+  }
+}
+
 
     function downloadFinalImage() {
       window.location.href = 'final_clue.png';

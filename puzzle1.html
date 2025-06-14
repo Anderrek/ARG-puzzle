@@ -139,46 +139,54 @@
   <div class="message" id="message"></div>
 
   <script>
-    let currentInput = "";
-    let correctAnswer = null;
+  let currentInput = "";
+  let correctAnswer = null;
+  let isAnswerLoaded = false;
 
-    function pressKey(char) {
-      if (char === "←") {
-        currentInput = currentInput.slice(0, -1);
+  // Wczytaj odpowiedź z pliku
+  fetch("answers.txt")
+    .then(response => {
+      if (!response.ok) throw new Error("Błąd sieci");
+      return response.text();
+    })
+    .then(text => {
+      const lines = text.trim().split(/\r?\n/);
+      correctAnswer = lines[0]?.trim(); // Pierwsza linia = odpowiedź do 1 zagadki
+      if (correctAnswer) {
+        isAnswerLoaded = true;
+        console.log("Odpowiedź wczytana:", correctAnswer); // Dla debugowania
       } else {
-        currentInput += char;
+        document.getElementById("message").innerText = "Błąd: Brak odpowiedzi w pliku.";
       }
-      document.getElementById("inputDisplay").innerText = currentInput;
+    })
+    .catch(error => {
+      console.error("Nie można wczytać pliku answers.txt:", error);
+      document.getElementById("message").innerText = "Błąd ładowania odpowiedzi.";
+    });
+
+  function pressKey(char) {
+    if (char === "←") {
+      currentInput = currentInput.slice(0, -1);
+    } else {
+      currentInput += char;
+    }
+    document.getElementById("inputDisplay").innerText = currentInput;
+  }
+
+  function checkAnswer() {
+    if (!isAnswerLoaded) {
+      document.getElementById("message").innerText = "Odpowiedź jeszcze się ładuje. Poczekaj chwilę.";
+      return;
     }
 
-    function checkAnswer() {
-      if (correctAnswer === null) {
-        document.getElementById("message").innerText = "Odpowiedź jeszcze się ładuje. Spróbuj za chwilę.";
-        return;
-      }
-
-      if (currentInput.toUpperCase() === correctAnswer.toUpperCase()) {
-        document.getElementById("message").innerText = "Correct! Puzzle solved.";
-        localStorage.setItem("puzzle1", "solved");
-      } else {
-        document.getElementById("message").innerText = "Try again.";
-      }
+    if (currentInput.toUpperCase() === correctAnswer.toUpperCase()) {
+      document.getElementById("message").innerText = "Correct! Puzzle solved.";
+      localStorage.setItem("puzzle1", "solved");
+    } else {
+      document.getElementById("message").innerText = "Try again.";
     }
+  }
+</script>
 
-    // Wczytywanie odpowiedzi z pliku
-    fetch('answers.txt')
-      .then(response => {
-        if (!response.ok) throw new Error("Błąd sieci");
-        return response.text();
-      })
-      .then(data => {
-        const lines = data.trim().split(/\r?\n/);
-        correctAnswer = lines[0]; // Odpowiedź do Puzzle 1
-      })
-      .catch(error => {
-        console.error("Nie można wczytać pliku answers.txt:", error);
-        document.getElementById("message").innerText = "Błąd ładowania odpowiedzi.";
-      });
-  </script>
 </body>
 </html>

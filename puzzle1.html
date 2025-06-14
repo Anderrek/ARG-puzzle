@@ -150,8 +150,8 @@
       return response.text();
     })
     .then(text => {
-      const lines = text.trim().split(/\r?\n/);
-      correctAnswer = lines[0]?.trim(); // Pierwsza linia = odpowiedź do 1 zagadki
+      const lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+      correctAnswer = lines[0];
       if (correctAnswer) {
         isAnswerLoaded = true;
         console.log("Odpowiedź wczytana:", correctAnswer); // Dla debugowania

@@ -139,26 +139,38 @@
   <div class="message" id="message"></div>
 
   <script>
-    let currentInput = "";
+  let currentInput = "";
+  let correctAnswer = "";
 
-    function pressKey(char) {
-      if (char === "←") {
-        currentInput = currentInput.slice(0, -1);
-      } else {
-        currentInput += char;
-      }
-      document.getElementById("inputDisplay").innerText = currentInput;
-    }
+  // Wczytaj plik z odpowiedziami
+  fetch("answers.txt")
+    .then(response => response.text())
+    .then(text => {
+      const lines = text.split("\n").map(line => line.trim());
+      correctAnswer = lines[0].toUpperCase(); // Pierwsza linia = odpowiedź do 1 zagadki
+    })
+    .catch(err => {
+      console.error("Błąd ładowania answers.txt:", err);
+      document.getElementById("message").innerText = "Błąd ładowania odpowiedzi.";
+    });
 
-    function checkAnswer() {
-      const answer = "THISISASECRET";
-      if (currentInput.toUpperCase() === answer) {
-        document.getElementById("message").innerText = "Correct! Puzzle solved.";
-        localStorage.setItem("puzzle1", "solved");
-      } else {
-        document.getElementById("message").innerText = "Try again.";
-      }
+  function pressKey(char) {
+    if (char === "←") {
+      currentInput = currentInput.slice(0, -1);
+    } else {
+      currentInput += char;
     }
-  </script>
+    document.getElementById("inputDisplay").innerText = currentInput;
+  }
+
+  function checkAnswer() {
+    if (currentInput.toUpperCase() === correctAnswer) {
+      document.getElementById("message").innerText = "Correct! Puzzle solved.";
+      localStorage.setItem("puzzle1", "solved");
+    } else {
+      document.getElementById("message").innerText = "Try again.";
+    }
+  }
+</script>
 </body>
 </html>

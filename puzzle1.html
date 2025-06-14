@@ -182,6 +182,7 @@
     }
 
     if (currentInput.toUpperCase() === correctAnswer.toUpperCase()) {
+      message.style.color = "44ff44";
       document.getElementById("message").innerText = "Correct! Puzzle solved.";
       localStorage.setItem("puzzle1", "solved");
     } else {

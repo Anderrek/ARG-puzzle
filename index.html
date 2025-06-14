@@ -208,8 +208,13 @@
     }
 
     function downloadFinalImage() {
-      window.location.href = 'final_clue.png';
-    }
+  if (solved.size === 9) {
+    window.location.href = 'final_clue.png';
+  } else {
+    alert("Not yet.");
+  }
+}
+
 
     function resetProgress() {
       localStorage.clear();

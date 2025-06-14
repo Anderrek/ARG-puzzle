@@ -1,4 +1,4 @@
-<!DOCTYPE html>More actions
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -75,10 +75,8 @@
     .puzzle-button:hover {
       background-color: #333;
       color: #fff;
-      transform: scale(1.03);
-      box-shadow: 0 0 10px #555;
+      animation: glitch 0.2s infinite;
     }
-
 
     .status {
       font-size: 14px;
@@ -91,8 +89,7 @@
       text-shadow: 0 0 3px #44ff44;
     }
 
-    .solve-button {
-      visibility: hidden;
+    .solve-button, .reset-button {
       margin-top: 30px;
       padding: 10px 20px;
       font-size: 18px;
@@ -106,24 +103,14 @@
       animation-delay: 1s;
     }
 
-    .solve-button.visible {
-      visibility: visible;
-      opacity: 1;
+    .solve-button.active {
+      display: block;
+      animation: pulse 2s infinite;
     }
-
 
     .reset-button {
-      margin-top: 30px;
-      padding: 10px 20px;
-      font-size: 18px;
-      border: 2px solid #444;
-      cursor: pointer;
-      background-color: #111;
-      color: #fff;
-      opacity: 0;
-      transform: scale(0.95);
-      animation: fadeIn 2s ease forwards;
-      animation-delay: 1s;
+      background-color: #440000;
+      margin-top: 10px;
     }
 
     .reset-button:hover {
@@ -185,91 +172,55 @@
   <button class="reset-button" onclick="resetProgress()">Reset Progress</button>
 
   <script>
+    const solved = new Set();
+
     function openPuzzle(id) {
-  window.location.href = `puzzle${id}.html`;
-}
-
-function markSolved(id) {
-  localStorage.setItem(`puzzle${id}`, "solved");
-  updateStatus(id);
-  checkSolveButton();
-}
-
-function updateStatus(id) {
-  const status = document.getElementById(`status${id}`);
-  status.innerText = 'SOLVED';
-  status.parentElement.classList.add('solved');
-}
-
-function checkSolveButton() {
-  let allSolved = true;
-  for (let i = 1; i <= 9; i++) {
-    if (localStorage.getItem(`puzzle${i}`) !== "solved") {
-      allSolved = false;
-      break;
+      window.location.href = `puzzle${id}.html`;
     }
-  }
 
-  const solveBtn = document.getElementById("solveBtn");
-  if (allSolved) {
-    solveBtn.classList.add("visible");
-  } else {
-    solveBtn.classList.remove("visible");
-  }
-}
-
-
-    
-function downloadFinalImage() {
-  window.location.href = 'final_clue.png';
-}
-
-function resetProgress() {
-  localStorage.clear();
-  for (let i = 1; i <= 9; i++) {
-    const status = document.getElementById(`status${i}`);
-    if (status) {
-      status.innerText = 'UNSOLVED';
-      status.parentElement.classList.remove('solved');
+    function markSolved(id) {
+      localStorage.setItem(`puzzle${id}`, "solved");
+      updateStatus(id);
+      checkSolveButton();
     }
-  }
-  document.getElementById("solveBtn").classList.remove("active");
-  checkSolveButton();
-}
 
-// ✅ Inicjalizacja na starcie:
-for (let i = 1; i <= 9; i++) {
-  if (localStorage.getItem(`puzzle${i}`) === "solved") {
-    updateStatus(i);
-window.addEventListener("DOMContentLoaded", () => {
-  for (let i = 1; i <= 9; i++) {
-    if (localStorage.getItem(`puzzle${i}`) === "solved") {
-      updateStatus(i);
+    function updateStatus(id) {
+      const status = document.getElementById(`status${id}`);
+      status.innerText = 'SOLVED';
+      status.parentElement.classList.add('solved');
+      solved.add(id);
     }
-  }
-}
-checkSolveButton();
-  
-  const solveBtn = document.getElementById("solveBtn");
 
-  let allSolved = true;
-  for (let i = 1; i <= 9; i++) {
-    if (localStorage.getItem(`puzzle${i}`) !== "solved") {
-      allSolved = false;
-      break;
+    function checkSolveButton() {
+      if (solved.size === 9) {
+        document.getElementById("solveBtn").classList.add("active");
+      }
     }
-  }
 
-  if (allSolved) {
-    solveBtn.classList.remove("visible");
-    setTimeout(() => {
-      solveBtn.classList.add("visible");
-    }, 50);
-  } else {
-    solveBtn.classList.remove("visible");
-  }
-});
+    function downloadFinalImage() {
+      window.location.href = 'final_clue.png';
+    }
 
+    function resetProgress() {
+      localStorage.clear();
+      solved.clear();
+      for (let i = 1; i <= 9; i++) {
+        const status = document.getElementById(`status${i}`);
+        if (status) {
+          status.innerText = 'UNSOLVED';
+          status.parentElement.classList.remove('solved');
+        }
+      }
+      document.getElementById("solveBtn").classList.remove("active");
+    }
+
+    // Initialize from localStorage
+    for (let i = 1; i <= 9; i++) {
+      if (localStorage.getItem(`puzzle${i}`) === "solved") {
+        updateStatus(i);
+      }
+    }
+    checkSolveButton();
   </script>
 </body>
 </html>

@@ -278,9 +278,10 @@ function resetProgress() {
       status.parentElement.classList.remove('solved');
     }
   }
-  document.getElementById("solveBtn").classList.remove("active");
-  checkSolveButton();
+  const solveBtn = document.getElementById("solveBtn");
+  solveBtn.classList.remove("visible");
 }
+
 
 function animateParticlesToSolve() {
   const solveBtn = document.getElementById('solveBtn');

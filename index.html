@@ -71,12 +71,7 @@
       opacity: 0;
       box-shadow: 0 0 10px #000;
     }
-
-    .puzzle-button:hover {
-      background-color: #333;
-      color: #fff;
-      animation: glitch 0.2s infinite;
-    }
+    
    .puzzle-button:hover {
   background-color: #333;
   color: #fff;
@@ -121,6 +116,8 @@
 
     .reset-button:hover {
       background-color: #770000;
+      transform: scale(1.03);
+      box-shadow: 0 0 10px #555;
     }
 
     .puzzle-button::after {
@@ -131,6 +128,13 @@
       pointer-events: none;
       animation: pulse 3s infinite;
     }
+    
+    .solve-button:hover {
+      background-color: #774444;
+      transform: scale(1.03);
+      box-shadow: 0 0 10px #555;
+    }
+    
   </style>
 </head>
 <body>

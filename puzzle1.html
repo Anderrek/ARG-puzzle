@@ -139,37 +139,46 @@
   <div class="message" id="message"></div>
 
   <script>
-  let currentInput = "";
+    let currentInput = "";
+    let correctAnswer = null;
 
-  // Wczytaj plik z odpowiedziami
-  fetch("answers.txt")
-    .then(response => response.text())
-    .then(text => {
-      const lines = text.split("\n").map(line => line.trim());
-      correctAnswer = lines[0].toUpperCase(); // Pierwsza linia = odpowiedź do 1 zagadki
-    })
-    .catch(err => {
-      console.error("Błąd ładowania answers.txt:", err);
-      document.getElementById("message").innerText = "Błąd ładowania odpowiedzi.";
-    });
-
-  function pressKey(char) {
-    if (char === "←") {
-      currentInput = currentInput.slice(0, -1);
-    } else {
-      currentInput += char;
+    function pressKey(char) {
+      if (char === "←") {
+        currentInput = currentInput.slice(0, -1);
+      } else {
+        currentInput += char;
+      }
+      document.getElementById("inputDisplay").innerText = currentInput;
     }
-    document.getElementById("inputDisplay").innerText = currentInput;
-  }
 
-  function checkAnswer() {
-    if (currentInput.toUpperCase() === correctAnswer) {
-      document.getElementById("message").innerText = "Correct! Puzzle solved.";
-      localStorage.setItem("puzzle1", "solved");
-    } else {
-      document.getElementById("message").innerText = "Try again.";
+    function checkAnswer() {
+      if (correctAnswer === null) {
+        document.getElementById("message").innerText = "Odpowiedź jeszcze się ładuje. Spróbuj za chwilę.";
+        return;
+      }
+
+      if (currentInput.toUpperCase() === correctAnswer.toUpperCase()) {
+        document.getElementById("message").innerText = "Correct! Puzzle solved.";
+        localStorage.setItem("puzzle1", "solved");
+      } else {
+        document.getElementById("message").innerText = "Try again.";
+      }
     }
-  }
-</script>
+
+    // Wczytywanie odpowiedzi z pliku
+    fetch('answers.txt')
+      .then(response => {
+        if (!response.ok) throw new Error("Błąd sieci");
+        return response.text();
+      })
+      .then(data => {
+        const lines = data.trim().split(/\r?\n/);
+        correctAnswer = lines[0]; // Odpowiedź do Puzzle 1
+      })
+      .catch(error => {
+        console.error("Nie można wczytać pliku answers.txt:", error);
+        document.getElementById("message").innerText = "Błąd ładowania odpowiedzi.";
+      });
+  </script>
 </body>
 </html>

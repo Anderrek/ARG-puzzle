@@ -57,7 +57,6 @@
     }
 
     .puzzle-button {
-      display: none;
       background-color: #1a1a1a;
       border: 2px solid #333;
       color: #999;
@@ -92,7 +91,23 @@
       text-shadow: 0 0 3px #44ff44;
     }
 
-    .solve-button, .reset-button {
+    .solve-button {
+      display: none;
+      margin-top: 30px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: 2px solid #444;
+      cursor: pointer;
+      background-color: #111;
+      color: #fff;
+      opacity: 0;
+      transform: scale(0.95);
+      animation: fadeIn 2s ease forwards;
+      animation-delay: 1s;
+    }
+
+    
+    .reset-button {
       margin-top: 30px;
       padding: 10px 20px;
       font-size: 18px;

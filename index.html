@@ -217,8 +217,7 @@ function checkSolveButton() {
     solveBtn.classList.remove("visible");
   }
 }
-
-
+    
 function downloadFinalImage() {
   window.location.href = 'final_clue.png';
 }
@@ -236,13 +235,32 @@ function resetProgress() {
   checkSolveButton();
 }
 
-// ✅ Inicjalizacja na starcie:
-for (let i = 1; i <= 9; i++) {
-  if (localStorage.getItem(`puzzle${i}`) === "solved") {
-    updateStatus(i);
+window.addEventListener("DOMContentLoaded", () => {
+  for (let i = 1; i <= 9; i++) {
+    if (localStorage.getItem(`puzzle${i}`) === "solved") {
+      updateStatus(i);
+    }
   }
-}
-checkSolveButton();
+  
+  const solveBtn = document.getElementById("solveBtn");
+
+  let allSolved = true;
+  for (let i = 1; i <= 9; i++) {
+    if (localStorage.getItem(`puzzle${i}`) !== "solved") {
+      allSolved = false;
+      break;
+    }
+  }
+
+  if (allSolved) {
+    solveBtn.classList.remove("visible");
+    setTimeout(() => {
+      solveBtn.classList.add("visible");
+    }, 50);
+  } else {
+    solveBtn.classList.remove("visible");
+  }
+});
 
   </script>
 </body>

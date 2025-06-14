@@ -174,26 +174,23 @@
   <button class="reset-button" onclick="resetProgress()">Reset Progress</button>
 
   <script>
-    const solved = new Set();
-
     function openPuzzle(id) {
-      window.location.href = `puzzle${id}.html`;
-    }
+  window.location.href = `puzzle${id}.html`;
+}
 
-    function markSolved(id) {
-      localStorage.setItem(`puzzle${id}`, "solved");
-      updateStatus(id);
-      checkSolveButton();
-    }
+function markSolved(id) {
+  localStorage.setItem(`puzzle${id}`, "solved");
+  updateStatus(id);
+  checkSolveButton();
+}
 
-    function updateStatus(id) {
-      const status = document.getElementById(`status${id}`);
-      status.innerText = 'SOLVED';
-      status.parentElement.classList.add('solved');
-      solved.add(id);
-    }
+function updateStatus(id) {
+  const status = document.getElementById(`status${id}`);
+  status.innerText = 'SOLVED';
+  status.parentElement.classList.add('solved');
+}
 
-    function checkSolveButton() {
+function checkSolveButton() {
   let allSolved = true;
   for (let i = 1; i <= 9; i++) {
     if (localStorage.getItem(`puzzle${i}`) !== "solved") {
@@ -210,31 +207,30 @@
   }
 }
 
+function downloadFinalImage() {
+  window.location.href = 'final_clue.png';
+}
 
-    function downloadFinalImage() {
-      window.location.href = 'final_clue.png';
+function resetProgress() {
+  localStorage.clear();
+  for (let i = 1; i <= 9; i++) {
+    const status = document.getElementById(`status${i}`);
+    if (status) {
+      status.innerText = 'UNSOLVED';
+      status.parentElement.classList.remove('solved');
     }
+  }
+  document.getElementById("solveBtn").classList.remove("active");
+}
 
-    function resetProgress() {
-      localStorage.clear();
-      solved.clear();
-      for (let i = 1; i <= 9; i++) {
-        const status = document.getElementById(`status${i}`);
-        if (status) {
-          status.innerText = 'UNSOLVED';
-          status.parentElement.classList.remove('solved');
-        }
-      }
-      document.getElementById("solveBtn").classList.remove("active");
-    }
+// ✅ Inicjalizacja na starcie:
+for (let i = 1; i <= 9; i++) {
+  if (localStorage.getItem(`puzzle${i}`) === "solved") {
+    updateStatus(i);
+  }
+}
+checkSolveButton();
 
-    // Initialize from localStorage
-    for (let i = 1; i <= 9; i++) {
-      if (localStorage.getItem(`puzzle${i}`) === "solved") {
-        updateStatus(i);
-      }
-    }
-    checkSolveButton();
   </script>
 </body>
 </html>

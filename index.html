@@ -30,6 +30,46 @@
       to { opacity: 1; transform: scale(1); }
     }
 
+    .particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #44ff44;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 5px #44ff44);
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes flyToSolve {
+  to {
+    transform: translate(var(--dx), var(--dy)) scale(0.3);
+    opacity: 0;
+  }
+}
+
+  .solve-button {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    margin-top: 30px;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: 2px solid #444;
+    background-color: #111;
+    color: #fff;
+    cursor: pointer;
+    position: relative;
+      z-index: 10;
+    }
+
+    .solve-button.visible {
+      visibility: visible;
+      opacity: 1;
+    }
+
+
     body {
       background-color: #0d0d0d;
       animation: flickerBackground 4s infinite;
@@ -104,11 +144,6 @@
       transform: scale(0.95);
       animation: fadeIn 2s ease forwards;
       animation-delay: 1s;
-    }
-
-    .solve-button.visible {
-      visibility: visible;
-      opacity: 1;
     }
 
     
@@ -235,6 +270,62 @@ function resetProgress() {
   checkSolveButton();
 }
 
+function animateParticlesToSolve() {
+  const solveBtn = document.getElementById('solveBtn');
+  const solveRect = solveBtn.getBoundingClientRect();
+
+  // Pobierz wszystkie rozwiązane puzzle
+  const solvedButtons = [];
+  for (let i = 1; i <= 9; i++) {
+    if (localStorage.getItem(`puzzle${i}`) === "solved") {
+      const btn = document.getElementById(`puzzle${i}`);
+      if (btn) solvedButtons.push(btn);
+    }
+  }
+
+  let completedAnimations = 0;
+  const totalAnimations = solvedButtons.length;
+
+  if (totalAnimations === 0) return;
+
+  // Stwórz cząsteczkę i animuj dla każdego rozwiązania
+  solvedButtons.forEach(btn => {
+    const btnRect = btn.getBoundingClientRect();
+
+    // Stwórz cząsteczkę
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+
+    // Startowa pozycja (w body, absolutna)
+    particle.style.left = btnRect.left + btnRect.width / 2 + 'px';
+    particle.style.top = btnRect.top + btnRect.height / 2 + 'px';
+
+    document.body.appendChild(particle);
+
+    // Oblicz przesunięcie do przycisku SOLVE
+    const dx = solveRect.left + solveRect.width / 2 - (btnRect.left + btnRect.width / 2);
+    const dy = solveRect.top + solveRect.height / 2 - (btnRect.top + btnRect.height / 2);
+
+    // Ustaw CSS variable do animacji
+    particle.style.setProperty('--dx', `${dx}px`);
+    particle.style.setProperty('--dy', `${dy}px`);
+
+    // Dodaj animację
+    particle.style.animation = 'flyToSolve 1s forwards';
+
+    // Po zakończeniu animacji usuń cząsteczkę
+    particle.addEventListener('animationend', () => {
+      particle.remove();
+      completedAnimations++;
+      if (completedAnimations === totalAnimations) {
+        // Gdy wszystkie animacje zakończone, pokaż przycisk SOLVE
+        solveBtn.classList.add('visible');
+      }
+    });
+  });
+}
+
+    
 window.addEventListener("DOMContentLoaded", () => {
   for (let i = 1; i <= 9; i++) {
     if (localStorage.getItem(`puzzle${i}`) === "solved") {

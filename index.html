@@ -135,6 +135,21 @@
       transform: scale(1.03);
       box-shadow: 0 0 10px #555;
     }
+
+    #message {
+  font-family: 'Courier New', monospace;
+  color: #ff4444;
+  margin-top: 20px;
+  font-size: 20px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+#message.show {
+  opacity: 1;
+}
+
     
   </style>
 </head>
@@ -180,6 +195,7 @@
   </div>
 
   <button class="solve-button" id="solveBtn" onclick="downloadFinalImage()">SOLVE</button>
+  <div id="message">Not yet.</div>
   <button class="reset-button" onclick="resetProgress()">Reset Progress</button>
 
   <script>
@@ -214,6 +230,16 @@
   } else {
     alert("Not yet.");
   }
+}
+
+    function showMessage(text) {
+  const msg = document.getElementById("message");
+  msg.innerText = text;
+  msg.classList.add("show");
+
+  setTimeout(() => {
+    msg.classList.remove("show");
+  }, 3000);
 }
 
 

@@ -173,7 +173,7 @@
   function checkSequence() {
     if (codeSequence.join('') === correctCode.join('')) {
       result.style.color = "#44ff44";
-      result.style.weight = bold;
+      result.style.fontWeight = "bold";
       result.innerText = "Safe unlocked! Puzzle solved.";
       localStorage.setItem("puzzle9", "solved");
     } else {
@@ -219,6 +219,7 @@
   window.onload = () => {
     if (localStorage.getItem("puzzle9") === "solved") {
       result.style.color = "#44ff44";
+      result.style.fontWeight = "bold";
       result.innerText = "You have already solved this puzzle!";
     }
     updateCodeDisplay();

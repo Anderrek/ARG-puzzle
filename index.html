@@ -246,6 +246,18 @@ function checkSolveButton() {
   }
 
   const solveBtn = document.getElementById("solveBtn");
+
+  if (allSolved) {
+    // Ukrywamy przycisk jeśli jest widoczny i startujemy animację
+    solveBtn.classList.remove("visible");
+    animateParticlesToSolve();
+  } else {
+    solveBtn.classList.remove("visible");
+  }
+}
+
+
+  const solveBtn = document.getElementById("solveBtn");
   if (allSolved) {
     solveBtn.classList.add("visible");
   } else {

@@ -173,6 +173,7 @@
   function checkSequence() {
     if (codeSequence.join('') === correctCode.join('')) {
       result.style.color = "#44ff44";
+      result.style.weight = bold;
       result.innerText = "Safe unlocked! Puzzle solved.";
       localStorage.setItem("puzzle9", "solved");
     } else {

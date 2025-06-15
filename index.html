@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Puzzle Central Hub</title>
+  <title>R E D A C T E D</title>
   <style>
     @keyframes flickerBackground {
       0%, 100% { background-color: #0d0d0d; }
@@ -44,11 +44,14 @@
     }
 
     h1 {
-      margin-bottom: 40px;
-      animation: fadeIn 1.5s ease forwards, glitch 1.5s infinite;
-      color: #ff0000;
-      text-shadow: 0 0 5px #ff0000;
-    }
+  margin-bottom: 40px;
+  color: #ff0000;
+  text-shadow: 0 0 5px #ff0000;
+  opacity: 0;
+  animation: fadeIn 1.5s ease forwards, glitch 1.5s infinite 1.5s;
+  transition: all 0.5s ease;
+}
+
 
     .grid {
       display: grid;
@@ -149,7 +152,7 @@
   </style>
 </head>
 <body>
-  <h1>REDACTED</h1>
+  <h1 id="main-title">REDACTED</h1>
   <div class="grid">
     <div class="puzzle-button" id="puzzle1" onclick="openPuzzle(1)">
       Puzzle 1
@@ -211,6 +214,11 @@
       status.innerText = 'SOLVED';
       status.parentElement.classList.add('solved');
       solved.add(id);
+
+      if (solved.size === 9) {
+        document.getElementById("solveBtn").classList.add("active");
+        document.getElementById("main-title").innerText = "MISS ME?";
+      }
     }
 
     function downloadFinalImage() {
@@ -243,6 +251,7 @@
         }
       }
       document.getElementById("solveBtn").classList.remove("active");
+      document.getElementById("main-title").innerText = "REDACTED";
     }
 
     // Initialize from localStorage

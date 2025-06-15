@@ -287,16 +287,16 @@
   function type() {
     if (i < text.length) {
       typewriter.textContent += text.charAt(i);
-      sound.currentTime = 0;   // restart dźwięku
+      sound.currentTime = 0; // restart dźwięku
       sound.play();
       i++;
-      setTimeout(type, 150); // prędkość pisania
-      setTimeout(type, 150);
+      setTimeout(type, 300); // prędkość pisania liter (300ms)
     }
   }
 
   type();
 });
+
 
 
   </script>

@@ -5,6 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Puzzle 8</title>
 <style>
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    opacity: 0;
+    animation: fadeInUp 1s ease forwards;
+  }
+
+  .fade-delay-1 { animation-delay: 0.3s; }
+  .fade-delay-2 { animation-delay: 0.6s; }
+  .fade-delay-3 { animation-delay: 0.9s; }
+  .fade-delay-4 { animation-delay: 1.2s; }
+  .fade-delay-5 { animation-delay: 1.5s; }
+  .fade-delay-6 { animation-delay: 1.8s; }
+
   body {
     background-color: #0d0d0d;
     color: #eee;
@@ -70,7 +93,7 @@
     margin-top: 15px;
     font-weight: bold;
     min-height: 24px;
-    color: 44ff44;
+    color: #44ff44;
     font-size: 18px;
   }
   .back-button {
@@ -88,10 +111,10 @@
 </style>
 </head>
 <body>
-  <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
-  <h1>Puzzle 8</h1>
+  <button class="back-button fade-in fade-delay-1" onclick="window.location.href='index.html'">← Back</button>
+  <h1 class="fade-in fade-delay-2">Puzzle 8</h1>
 
-  <div class="lyrics">
+  <div class="lyrics fade-in fade-delay-3">
 I that am <span class="different-font">lost</span>,oh who will <span class="uppercase">FIND</span> me?<br><br>
 
 Deep down below the old beech tree<br><br>
@@ -131,10 +154,10 @@ Inside, brother mine - <br><br>
 Let death make a room.
   </div>
 
-  <input type="text" id="answerInput" placeholder="Enter the three hidden words, comma separated" autocomplete="off" />
-  <button onclick="checkAnswer()">Submit</button>
+  <input type="text" id="answerInput" placeholder="Enter the three hidden words, comma separated" autocomplete="off" class="fade-in fade-delay-4" />
+  <button onclick="checkAnswer()" class="fade-in fade-delay-5">Submit</button>
 
-  <div id="result"></div>
+  <div id="result" class="fade-in fade-delay-6"></div>
 
 <script>
   const answers = ["lost", "find", "brother"];

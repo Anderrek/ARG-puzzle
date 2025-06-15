@@ -5,6 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Puzzle 9</title>
 <style>
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    opacity: 0;
+    animation: fadeInUp 1s ease forwards;
+  }
+
+  .fade-delay-1 { animation-delay: 0.3s; }
+  .fade-delay-2 { animation-delay: 0.6s; }
+  .fade-delay-3 { animation-delay: 0.9s; }
+  .fade-delay-4 { animation-delay: 1.2s; }
+  .fade-delay-5 { animation-delay: 1.5s; }
+  .fade-delay-6 { animation-delay: 1.8s; }
+
   body {
     background-color: #0d0d0d;
     color: #eee;
@@ -79,6 +102,12 @@
     color: #999;
     font-style: italic;
   }
+  #result {
+    margin-top: 10px;
+    min-height: 28px;
+    font-weight: bold;
+    font-size: 18px;
+  }
   .back-button {
     position: fixed;
     top: 20px;
@@ -94,10 +123,10 @@
 </style>
 </head>
 <body>
-  <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
-  <h1>Puzzle 9</h1>
+  <button class="back-button fade-in fade-delay-1" onclick="window.location.href='index.html'">← Back</button>
+  <h1 class="fade-in fade-delay-2">Puzzle 9</h1>
 
-  <div id="clock" aria-label="Safe dial clock">
+  <div id="clock" aria-label="Safe dial clock" class="fade-in fade-delay-3">
     <!-- Hour marks (hidden) -->
     <div class="hour-mark" style="transform: translateX(-50%) rotate(0deg); top:15px;"></div>
     <div class="hour-mark" style="transform: translateX(-50%) rotate(30deg); top:15px;"></div>
@@ -130,9 +159,9 @@
     <div id="hand" style="transform: rotate(0deg);"></div>
   </div>
 
-  <div id="codeDisplay">Code:</div>
-  <div id="result"></div>
-  <div id="hint">For what it’s worth, the mine was hidden near a tree.</div>
+  <div id="codeDisplay" class="fade-in fade-delay-4">Code:</div>
+  <div id="result" class="fade-in fade-delay-5"></div>
+  <div id="hint" class="fade-in fade-delay-6">For what it’s worth, the mine was hidden near a tree.</div>
 
 <script>
   const hand = document.getElementById('hand');

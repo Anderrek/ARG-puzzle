@@ -10,6 +10,15 @@
       50% { background-color: #0f0f0f; }
     }
 
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-1px, 1px); }
+      40% { transform: translate(1px, -1px); }
+      60% { transform: translate(-2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
     @keyframes pulse {
       0% { box-shadow: 0 0 5px #333; }
       50% { box-shadow: 0 0 20px #555; }
@@ -39,9 +48,11 @@
       color: #ff0000;
       text-shadow: 0 0 5px #ff0000;
       opacity: 0;
+       animation: fadeIn 1.5s ease forwards, glitch 1.5s infinite 1.5s;
        animation: fadeIn 1.5s ease forwards;
        transition: all 0.5s ease;
     }
+
 
     .grid {
       display: grid;
@@ -64,7 +75,7 @@
       opacity: 0;
       box-shadow: 0 0 10px #000;
     }
-    
+
    .puzzle-button:hover {
       background-color: #333;
       color: #fff;
@@ -122,7 +133,7 @@
       pointer-events: none;
       animation: pulse 3s infinite;
     }
-    
+
     .solve-button:hover {
       background-color: #777777;
       transform: scale(1.03);
@@ -153,7 +164,7 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
     }
-    
+
   </style>
 </head>
 <body>
@@ -198,7 +209,7 @@
     </div>
   </div>
 
-  
+
   <button class="reset-button" onclick="resetProgress()">Reset Progress</button>
   <button class="solve-button" id="solveBtn" onclick="downloadFinalImage()">SOLVE</button>
   <div id="message">Not yet.</div>
@@ -273,32 +284,21 @@
   const sound = document.getElementById("type-sound");
   let i = 0;
 
-  // Funkcja wpisywania
   function type() {
     if (i < text.length) {
       typewriter.textContent += text.charAt(i);
-      sound.currentTime = 0;
-      sound.play().catch(() => {}); // ignoruj błąd, jeśli nie można odtworzyć
+      sound.currentTime = 0;   // restart dźwięku
+      sound.play();
       i++;
+      setTimeout(type, 150); // prędkość pisania
       setTimeout(type, 150);
     }
   }
 
-  // Uruchom animację po kliknięciu użytkownika
-  function startTyping() {
-    document.body.removeEventListener('click', startTyping);
-    type();
-  }
-
-  document.body.addEventListener('click', startTyping);
-
-  // Pokaż instrukcję kliknięcia, żeby użytkownik wiedział
-  const cursor = document.getElementById("cursor");
-  cursor.textContent = "_";
+  type();
 });
 
 
-
-  </script>
+  </script>More actions
 </body>
 </html>

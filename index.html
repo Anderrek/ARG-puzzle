@@ -273,18 +273,30 @@
   const sound = document.getElementById("type-sound");
   let i = 0;
 
+  // Funkcja wpisywania
   function type() {
     if (i < text.length) {
       typewriter.textContent += text.charAt(i);
-      sound.currentTime = 0;   // restart dźwięku
-      sound.play();
+      sound.currentTime = 0;
+      sound.play().catch(() => {}); // ignoruj błąd, jeśli nie można odtworzyć
       i++;
       setTimeout(type, 150);
     }
   }
 
-  type();
+  // Uruchom animację po kliknięciu użytkownika
+  function startTyping() {
+    document.body.removeEventListener('click', startTyping);
+    type();
+  }
+
+  document.body.addEventListener('click', startTyping);
+
+  // Pokaż instrukcję kliknięcia, żeby użytkownik wiedział
+  const cursor = document.getElementById("cursor");
+  cursor.textContent = "_ (kliknij, aby zacząć)";
 });
+
 
 
   </script>

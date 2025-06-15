@@ -44,13 +44,13 @@
     }
 
     h1 {
-  margin-bottom: 40px;
-  color: #ff0000;
-  text-shadow: 0 0 5px #ff0000;
-  opacity: 0;
-  animation: fadeIn 1.5s ease forwards, glitch 1.5s infinite 1.5s;
-  transition: all 0.5s ease;
-}
+      margin-bottom: 40px;
+      color: #ff0000;
+      text-shadow: 0 0 5px #ff0000;
+      opacity: 0;
+       animation: fadeIn 1.5s ease forwards, glitch 1.5s infinite 1.5s;
+       transition: all 0.5s ease;
+    }
 
 
     .grid {
@@ -76,11 +76,11 @@
     }
     
    .puzzle-button:hover {
-  background-color: #333;
-  color: #fff;
-  transform: scale(1.03);
-  box-shadow: 0 0 10px #555;
-}
+      background-color: #333;
+      color: #fff;
+      transform: scale(1.03);
+      box-shadow: 0 0 10px #555;
+    }
 
     .status {
       font-size: 14px;
@@ -106,6 +106,11 @@
       transform: scale(0.95);
       animation: fadeIn 2s ease forwards;
       animation-delay: 1s;
+    }
+
+    .solve-button.visible {
+      opacity: 1;
+      transform: scale(1);
     }
 
     .solve-button.active {
@@ -135,19 +140,18 @@
     }
 
     #message {
-  font-family: 'Courier New', monospace;
-  color: #ff4444;
-  margin-top: 20px;
-  font-size: 20px;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-}
+      font-family: 'Courier New', monospace;
+      color: #ff4444;
+      margin-top: 20px;
+      font-size: 20px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
 
-#message.show {
-  opacity: 1;
-}
-
+    #message.show {
+      opacity: 1;
+    }
     
   </style>
 </head>
@@ -216,7 +220,8 @@
       solved.add(id);
 
       if (solved.size === 9) {
-        document.getElementById("solveBtn").classList.add("active");
+        const solveBtn = document.getElementById("solveBtn");
+        solveBtn.classList.add("active", "visible");
         document.getElementById("main-title").innerText = "MISS ME?";
       }
     }
@@ -250,7 +255,7 @@
           status.parentElement.classList.remove('solved');
         }
       }
-      document.getElementById("solveBtn").classList.remove("active");
+      document.getElementById("solveBtn").classList.remove("active", "visible");
       document.getElementById("main-title").innerText = "REDACTED";
     }
 

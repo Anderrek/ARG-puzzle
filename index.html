@@ -152,11 +152,22 @@
     #message.show {
       opacity: 1;
     }
+
+    #cursor {
+      animation: blink 1s steps(1) infinite;
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
     
   </style>
 </head>
 <body>
-  <h1 id="main-title">REDACTED</h1>
+  <h1 id="main-title"><span id="typewriter"></span><span id="cursor">_</span></h1>
   <div class="grid">
     <div class="puzzle-button" id="puzzle1" onclick="openPuzzle(1)">
       Puzzle 1
@@ -259,12 +270,28 @@
       document.getElementById("main-title").innerText = "REDACTED";
     }
 
-    // Initialize from localStorage
     for (let i = 1; i <= 9; i++) {
       if (localStorage.getItem(`puzzle${i}`) === "solved") {
         updateStatus(i);
       }
     }
+
+    document.addEventListener("DOMContentLoaded", () => {
+  const text = "REDACTED";
+  const typewriter = document.getElementById("typewriter");
+  let i = 0;
+
+  function type() {
+    if (i < text.length) {
+      typewriter.textContent += text.charAt(i);
+      i++;
+      setTimeout(type, 150); // prędkość pisania
+    }
+  }
+
+  type();
+});
+
   </script>
 </body>
 </html>

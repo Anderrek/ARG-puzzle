@@ -5,6 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Puzzle 4</title>
 <style>
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    opacity: 0;
+    animation: fadeInUp 1s ease forwards;
+  }
+
+  .fade-delay-1 { animation-delay: 0.3s; }
+  .fade-delay-2 { animation-delay: 0.6s; }
+  .fade-delay-3 { animation-delay: 0.9s; }
+  .fade-delay-4 { animation-delay: 1.2s; }
+  .fade-delay-5 { animation-delay: 1.5s; }
+  .fade-delay-6 { animation-delay: 1.8s; }
+
   body {
     background-color: #0d0d0d;
     color: #eee;
@@ -65,7 +88,7 @@
     font-size: 18px;
     min-height: 24px;
     font-weight: bold;
-    color: 44ff44;
+    color: #44ff44;
   }
   .back-button {
       position: fixed;
@@ -82,20 +105,20 @@
 </style>
 </head>
 <body>
-  <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
-  <h1>Puzzle 4</h1>
-  <div class="hint">[Your hint goes here]</div>
+  <button class="back-button fade-in fade-delay-1" onclick="window.location.href='index.html'">← Back</button>
+  <h1 class="fade-in fade-delay-2">Puzzle 4</h1>
+  <div class="hint fade-in fade-delay-3">[Your hint goes here]</div>
 
-  <div class="puzzle-text" aria-label="Puzzle text with hex and binary noise">
+  <div class="puzzle-text fade-in fade-delay-4" aria-label="Puzzle text with hex and binary noise">
     <!-- Example mixed hex and binary with noise -->
     48 65 6C 6C 6F 20 01000010 01101001 01101110 00110010 01001000 100101 57 6F 72 6C 64 00 01 111000 11010001 21
   </div>
 
-  <input type="text" id="answerInput" placeholder="Type your decoded message" autocomplete="off" />
+  <input type="text" id="answerInput" placeholder="Type your decoded message" autocomplete="off" class="fade-in fade-delay-5" />
 
-  <button onclick="checkAnswer()">Check Answer</button>
+  <button onclick="checkAnswer()" class="fade-in fade-delay-5">Check Answer</button>
 
-  <div id="result"></div>
+  <div id="result" class="fade-in fade-delay-6"></div>
 
 <script>
   const correctAnswer = "HELLOBINARYWORLD!";

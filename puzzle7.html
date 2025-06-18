@@ -116,7 +116,7 @@
     if(input === correctAnswer) {
       localStorage.setItem("puzzle7", "solved");
       message.style.color = "#44ff44";
-      message.innerText = "Correct! Puzzle solved.";
+      message.innerText = "207 3 26";
     } else {
       message.style.color = "#ff4444";
       message.innerText = "Try again.";
@@ -127,7 +127,7 @@
     if(localStorage.getItem("puzzle7") === "solved") {
       const message = document.getElementById('result');
       message.style.color = "#44ff44";
-      message.innerText = "You have already solved this puzzle!";
+      message.innerText = "207 3 26";
       document.getElementById('answerInput').value = correctAnswer;
     }
   };

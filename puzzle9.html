@@ -199,24 +199,33 @@
     }
   }
 
-  function checkSequence() {
-    if (codeSequence.join('') === correctCode.join('')) {
-      result.style.color = "#44ff44";
-      result.style.fontWeight = "bold";
-      result.innerText = "Safe unlocked! Puzzle solved.";
-      localStorage.setItem("puzzle9", "solved");
-    } else {
-      result.style.color = "#ff4444";
-      result.style.fontSize = "18px";
-      result.style.fontWeight = "bold";
-      result.innerText = "Wrong code. Try again.";
-      setTimeout(() => {
-        result.innerText = "";
-        codeSequence = [];
-        updateCodeDisplay();
-      }, 1500);
-    }
+  const correctCode = ["4", "9", "3"];
+const secretCode = ["5", "10", "12"];
+
+function checkSequence() {
+  const input = codeSequence.join('');
+  if (input === correctCode.join('')) {
+    result.style.color = "#44ff44";
+    result.style.fontWeight = "bold";
+    result.innerText = "Safe unlocked! Puzzle solved.";
+    localStorage.setItem("puzzle9", "solved");
+  } else if (input === secretCode.join('')) {
+    result.style.color = "#44bbff";
+    result.style.fontWeight = "bold";
+    result.innerText = "You got the secret.";
+  } else {
+    result.style.color = "#ff4444";
+    result.style.fontSize = "18px";
+    result.style.fontWeight = "bold";
+    result.innerText = "Wrong code. Try again.";
+    setTimeout(() => {
+      result.innerText = "";
+      codeSequence = [];
+      updateCodeDisplay();
+    }, 1500);
   }
+}
+
 
   hand.addEventListener('mousedown', (e) => {
     dragging = true;

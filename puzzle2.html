@@ -160,7 +160,7 @@
 
       if (input === correctAnswer) {
         localStorage.setItem("puzzle2", "solved");
-        message.innerText = "Correct! Puzzle solved.";
+        message.innerText = "209 1 23";
       } else {
         message.innerText = "Try again.";
       }
@@ -172,7 +172,7 @@
       if(localStorage.getItem("puzzle2") === "solved") {
         const message = document.getElementById('message');
         message.style.color = "#44ff44";
-        message.innerText = "You have already solved this puzzle!";
+        message.innerText = "209 1 23";
         // poprawka: uzywamy 'answer', nie 'answerInput'
         document.getElementById('answer').value = "sherlock";
       }

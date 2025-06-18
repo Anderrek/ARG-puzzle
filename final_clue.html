@@ -7,18 +7,12 @@
   <style>
     body {
       margin: 0;
-      background-color: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      padding: 0;
       height: 100vh;
+      background: url('final_clue.jpg') no-repeat center center fixed;
+      background-size: cover;
       position: relative;
-    }
-
-    img {
-      max-width: 80%;
-      height: auto;
-      display: block;
+      overflow: hidden;
     }
 
     .back-button {
@@ -34,27 +28,27 @@
 
     #secret-btn {
       position: absolute;
-      top: 70%; /* <- dostosuj pozycję pionową */
-      left: 43%; /* <- dostosuj pozycję poziomą */
+      top: 70%; /* <-- dostosuj pionowo */
+      left: 82%; /* <-- dostosuj poziomo */
       transform: translate(-50%, -50%);
       background-color: transparent;
       border: none;
       width: 30px;
       height: 30px;
       cursor: pointer;
-      opacity: 0.05; /* prawie niewidoczne */
+      opacity: 0.03; /* niemal niewidoczne */
     }
 
     #secret-btn:hover {
-      opacity: 0.4; /* podpowiedź dla dociekliwych */
+      opacity: 0.3;
     }
   </style>
 </head>
 <body>
   <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
-  <img src="final_clue.jpg" alt="Final Clue" />
   <a href="https://drive.google.com/drive/folders/1SSEwIUq7_ZM8bSk4y1rKwtvMZULvcah9">
-    <button id="secret-btn" title=""></button>
+    <button id="secret-btn" title=" "></button>
   </a>
 </body>
 </html>
+

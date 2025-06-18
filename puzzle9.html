@@ -173,6 +173,7 @@
   let currentAngle = 0;
   let codeSequence = [];
   const correctCode = ["4", "9", "3"];
+  const secretCode = ["5", "10", "12"];
 
   function getAngle(cx, cy, ex, ey) {
     let dy = ey - cy;
@@ -205,6 +206,10 @@
       result.style.fontWeight = "bold";
       result.innerText = "Safe unlocked! Puzzle solved.";
       localStorage.setItem("puzzle9", "solved");
+    } else if (codeSequence.join('') === secretCode.join('')) {
+    result.style.color = "#44bbff";
+    result.style.fontWeight = "bold";
+    result.innerText = "You got the secret.";
     } else {
       result.style.color = "#ff4444";
       result.style.fontSize = "18px";

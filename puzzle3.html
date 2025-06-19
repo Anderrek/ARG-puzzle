@@ -140,34 +140,35 @@
 
   // Load answer from answers.txt
   fetch("answers.txt")
-    .then(res => res.text())
-    .then(text => {
-      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-      if (lines.length >= 3) {
-        correctAnswer = lines[2].toUpperCase();
+  .then(res => res.text())
+  .then(text => {
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    if (lines.length >= 3) {
+      correctAnswer = lines[2].toUpperCase();
 
-        // build morse sequence from correctAnswer
-        morseSequence = correctAnswer.split("").flatMap(letter => {
-          const code = morseMap[letter] || "";
-          return code.split("").concat(" "); // space between letters
-        });
+      // build morse sequence from correctAnswer
+      morseSequence = correctAnswer.split("").flatMap(letter => {
+        const code = morseMap[letter] || "";
+        return code.split("").concat(" "); // space between letters
+      });
 
-        // start animation
-        animateLamp();
+      // start animation after delay
+      setTimeout(animateLamp, 2500);
 
-        // if already solved, show answer and prefill
-        if (localStorage.getItem("puzzle3") === "solved") {
-          document.getElementById("result").innerText = "242 1 34";
-          document.getElementById("answerInput").value = correctAnswer;
-        }
-      } else {
-        document.getElementById("result").innerText = "Error: Not enough lines in answers.txt.";
+      // if already solved, show answer and prefill
+      if (localStorage.getItem("puzzle3") === "solved") {
+        document.getElementById("result").innerText = "242 1 34";
+        document.getElementById("answerInput").value = correctAnswer;
       }
-    })
-    .catch(err => {
-      console.error("Failed to load answers.txt:", err);
-      document.getElementById("result").innerText = "Error loading answer.";
-    });
+    } else {
+      document.getElementById("result").innerText = "Error: Not enough lines in answers.txt.";
+    }
+  })
+  .catch(err => {
+    console.error("Failed to load answers.txt:", err);
+    document.getElementById("result").innerText = "Error loading answer.";
+  });
+
 
   function checkAnswer() {
     const input = document.getElementById('answerInput').value.trim().toUpperCase();

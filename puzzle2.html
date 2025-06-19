@@ -130,62 +130,80 @@
   <div class="message fade-in fade-delay-5" id="message"></div>
 
   <script>
-    const keyword = "PLAYFAIR";
-    const alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
-    let key = "";
+  const keyword = "CHECKTHEDOT"; // <-- zmieniono hasło
+  const alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
+  let key = "";
+  let correctAnswer = "";
 
-    function generateGrid() {
-      const seen = new Set();
-      let keyString = "";
+  function generateGrid() {
+    const seen = new Set();
+    let keyString = "";
 
-      for (const char of keyword.toUpperCase()) {
-        if (!seen.has(char) && char !== "J") {
-          seen.add(char);
-          keyString += char;
-        }
-      }
-
-      for (const char of alphabet) {
-        if (!seen.has(char)) {
-          seen.add(char);
-          keyString += char;
-        }
-      }
-
-      key = keyString;
-
-      const grid = document.getElementById("grid");
-      for (let i = 0; i < 25; i++) {
-        const cell = document.createElement("div");
-        cell.className = "cell";
-        cell.innerText = keyString[i];
-        grid.appendChild(cell);
+    for (const char of keyword.toUpperCase()) {
+      if (!seen.has(char) && char !== "J") {
+        seen.add(char);
+        keyString += char;
       }
     }
 
-    function checkAnswer() {
-      const input = document.getElementById("answer").value.trim().toLowerCase();
-      const correctAnswer = "sherlock";
-      const message = document.getElementById("message");
-
-      if (input === correctAnswer) {
-        localStorage.setItem("puzzle2", "solved");
-        message.innerText = "209 1 23";
-      } else {
-        message.innerText = "Try again.";
+    for (const char of alphabet) {
+      if (!seen.has(char)) {
+        seen.add(char);
+        keyString += char;
       }
     }
 
-    generateGrid();
+    key = keyString;
 
-    window.onload = () => {
-      if(localStorage.getItem("puzzle2") === "solved") {
-        const message = document.getElementById('message');
-        message.style.color = "#44ff44";
-        message.innerText = "209 1 23";
-        document.getElementById('answer').value = "CHECKTHEDOT";
-      }
-    };
-  </script>
+    const grid = document.getElementById("grid");
+    for (let i = 0; i < 25; i++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.innerText = keyString[i];
+      grid.appendChild(cell);
+    }
+  }
+
+  async function loadAnswer() {
+    try {
+      const response = await fetch("answers.txt");
+      const text = await response.text();
+      const lines = text.trim().split("\n");
+      correctAnswer = lines[1].trim().toLowerCase(); // druga linijka
+    } catch (error) {
+      console.error("Failed to load answer:", error);
+    }
+  }
+
+  async function checkAnswer() {
+    const input = document.getElementById("answer").value.trim().toLowerCase();
+    const message = document.getElementById("message");
+
+    if (!correctAnswer) {
+      await loadAnswer(); // Załaduj, jeśli jeszcze nie załadowano
+    }
+
+    if (input === correctAnswer) {
+      localStorage.setItem("puzzle2", "solved");
+      message.innerText = "209 1 23";
+    } else {
+      message.innerText = "Try again.";
+    }
+  }
+
+  generateGrid();
+  loadAnswer(); // Od razu załaduj odpowiedź przy starcie
+
+  window.onload = async () => {
+    await loadAnswer();
+    if (localStorage.getItem("puzzle2") === "solved") {
+      const message = document.getElementById('message');
+      message.style.color = "#44ff44";
+      message.innerText = "209 1 23";
+      document.getElementById('answer').value = correctAnswer;
+    }
+  };
+</script>
+
 </body>
 </html>

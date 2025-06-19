@@ -51,26 +51,28 @@
     max-width: 400px;
     text-align: center;
   }
-  .cipher-text {
+  #maze {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    gap: 5px;
+    user-select: none;
+    margin-bottom: 15px;
+  }
+  #maze div {
     background-color: #111;
     border: 1px solid #333;
-    padding: 20px;
-    font-size: 24px;
-    letter-spacing: 2px;
-    margin-bottom: 20px;
-    width: 500px;
-    text-align: center;
-    user-select: none;
-    white-space: pre-wrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
     font-weight: bold;
+    user-select: none;
+    font-size: 20px;
+    height: 40px;
+    width: 40px;
   }
-  input[type="text"] {
-    font-family: 'Courier New', monospace;
-    font-size: 18px;
-    padding: 8px 12px;
-    border: 1px solid #555;
-    width: 400px;
-    color: #222;
+  #maze div.selected {
+    background-color: #44ff44;
   }
   button {
     margin-top: 20px;
@@ -94,6 +96,9 @@
     color: #44ff44;
     transition: opacity 0.5s ease;
   }
+  #result.error {
+    color: #ff4444;
+  }
   .back-button {
       position: fixed;
       top: 20px;
@@ -111,9 +116,11 @@
 <body>
   <button class="back-button fade-in fade-delay-1" onclick="window.location.href='index.html'">← Back</button>
   <h1 class="fade-in fade-delay-2">Puzzle 6</h1>
-  <div class="hint fade-in fade-delay-3"><br />Remember: M 🪞 N</div>
+  <div class="hint fade-in fade-delay-3">
+    Start with <strong>W</strong>, end at <strong>G</strong>, taking exactly 10 letters.
+  </div>
 
-  <div id="maze" class="fade-in fade-delay-4" style="display: grid; grid-template-columns: repeat(10, 40px); gap: 5px; user-select:none;"></div>
+  <div id="maze" class="fade-in fade-delay-4"></div>
 
   <button onclick="checkAnswer()" class="fade-in fade-delay-6">Check Answer</button>
 
@@ -121,100 +128,154 @@
 
 <script>
   const mazeLetters = [
-  'D','V','Z','I','V','S','R','M','T','O',
-  'W','E','A','R','E','H','I','I','N','G',
-  'A','S','D','F','G','H','J','K','L','Q',
-  'W','E','R','T','Y','U','I','O','P','A',
-  'S','D','F','G','H','J','K','L','Z','X',
-  'C','V','B','N','M','A','S','D','F','G',
-  'H','J','K','L','Q','W','E','A','R','E',
-  'H','I','I','N','G','Z','X','C','V','B',
-  'N','M','A','S','D','F','G','H','J','K',
-  'L','Q','W','E','R','T','Y','U','I','O',
-];
+    'D','V','Z','I','V','S','R','M','T','O',
+    'W','E','A','R','E','H','I','I','N','G',
+    'A','S','D','F','G','H','J','K','L','Q',
+    'W','E','R','T','Y','U','I','O','P','A',
+    'S','D','F','G','H','J','K','L','Z','X',
+    'C','V','B','N','M','A','S','D','F','G',
+    'H','J','K','L','Q','W','E','A','R','E',
+    'H','I','I','N','G','Z','X','C','V','B',
+    'N','M','A','S','D','F','G','H','J','K',
+    'L','Q','W','E','R','T','Y','U','I','O',
+  ];
 
-let selectedLetters = [];
+  let selectedLetters = [];
+  const mazeContainer = document.getElementById('maze');
+  const ROWS = 10;
+  const COLS = 10;
+  let correctAnswer = "";
 
-const mazeContainer = document.getElementById('maze');
+  function indexToCoord(idx) {
+    return { row: Math.floor(idx / COLS), col: idx % COLS };
+  }
 
-function createMaze() {
-  mazeLetters.forEach((letter, idx) => {
-    const cell = document.createElement('div');
-    cell.textContent = letter;
-    cell.style.backgroundColor = '#111';
-    cell.style.color = '#eee';
-    cell.style.border = '1px solid #333';
-    cell.style.display = 'flex';
-    cell.style.justifyContent = 'center';
-    cell.style.alignItems = 'center';
-    cell.style.cursor = 'pointer';
-    cell.style.fontWeight = 'bold';
-    cell.style.userSelect = 'none';
-    cell.style.fontSize = '20px';
-    cell.dataset.idx = idx;
+  function areNeighbors(idx1, idx2) {
+    const c1 = indexToCoord(idx1);
+    const c2 = indexToCoord(idx2);
+    const rowDiff = Math.abs(c1.row - c2.row);
+    const colDiff = Math.abs(c1.col - c2.col);
+    return rowDiff <= 1 && colDiff <= 1 && !(rowDiff === 0 && colDiff === 0);
+  }
 
-    cell.onclick = () => {
-      if(selectedLetters.includes(idx)) {
-        // Odznaczanie liter
-        selectedLetters = selectedLetters.filter(i => i !== idx);
-        cell.style.backgroundColor = '#111';
-      } else {
-        selectedLetters.push(idx);
-        cell.style.backgroundColor = '#44ff44';
-      }
-      updateSelectedText();
-    };
+  function createMaze() {
+    mazeLetters.forEach((letter, idx) => {
+      const cell = document.createElement('div');
+      cell.textContent = letter;
+      cell.dataset.idx = idx;
 
-    mazeContainer.appendChild(cell);
-  });
-}
+      cell.onclick = () => {
+        // If no letters selected, first must be 'W'
+        if(selectedLetters.length === 0) {
+          if(letter !== 'W') {
+            showMessage("You must start with 'W'.", true);
+            return;
+          }
+          selectCell(idx, cell);
+          return;
+        }
 
-function updateSelectedText() {
-  const selectedStr = selectedLetters.map(i => mazeLetters[i]).join('');
-  document.getElementById('result').innerText = selectedStr;
-}
+        // If letter already selected, deselect last only
+        if(selectedLetters.includes(idx)) {
+          if(idx === selectedLetters[selectedLetters.length - 1]) {
+            deselectLast();
+          } else {
+            showMessage("You can only deselect the last selected letter.", true);
+          }
+          return;
+        }
 
-// Hasło wczytamy dynamicznie (6 linijka z answers.txt)
-let correctAnswer = "";
+        // Check if clicked cell neighbors last selected
+        const lastIdx = selectedLetters[selectedLetters.length - 1];
+        if(!areNeighbors(lastIdx, idx)) {
+          showMessage("Select a neighboring letter.", true);
+          return;
+        }
 
-async function loadAnswer() {
-  try {
-    const response = await fetch('answers.txt');
-    const text = await response.text();
-    const lines = text.split('\n');
-    if(lines.length >= 6) {
-      correctAnswer = lines[5].trim().toUpperCase();
-      console.log('Correct answer loaded:', correctAnswer);
+        // Check length limit (10 letters max)
+        if(selectedLetters.length >= 10) {
+          showMessage("You can select only 10 letters.", true);
+          return;
+        }
+
+        selectCell(idx, cell);
+      };
+
+      mazeContainer.appendChild(cell);
+    });
+  }
+
+  function selectCell(idx, cell) {
+    selectedLetters.push(idx);
+    cell.classList.add('selected');
+    updateSelectedText();
+    clearMessage();
+  }
+
+  function deselectLast() {
+    const lastIdx = selectedLetters.pop();
+    const lastCell = mazeContainer.querySelector(`div[data-idx='${lastIdx}']`);
+    if(lastCell) lastCell.classList.remove('selected');
+    updateSelectedText();
+    clearMessage();
+  }
+
+  function updateSelectedText() {
+    const selectedStr = selectedLetters.map(i => mazeLetters[i]).join('');
+    const resultDiv = document.getElementById('result');
+    resultDiv.textContent = selectedStr;
+    resultDiv.classList.remove('error');
+  }
+
+  function showMessage(msg, isError = false) {
+    const resultDiv = document.getElementById('result');
+    resultDiv.textContent = msg;
+    if(isError) {
+      resultDiv.classList.add('error');
+    } else {
+      resultDiv.classList.remove('error');
     }
-  } catch(e) {
-    console.error('Error loading answers.txt:', e);
   }
-}
 
-function checkAnswer() {
-  const message = document.getElementById('result');
-  const userAnswer = selectedLetters.map(i => mazeLetters[i]).join('');
-  if(userAnswer === correctAnswer) {
-    localStorage.setItem("puzzle6", "solved");
-    message.style.color = "#44ff44";
-    message.innerText = "178 2 21";
-  } else {
-    message.style.color = "#ff4444";
-    message.innerText = "Try again.";
+  async function loadAnswer() {
+    try {
+      const response = await fetch('answers.txt');
+      const text = await response.text();
+      const lines = text.split('\n');
+      if(lines.length >= 6) {
+        correctAnswer = lines[5].trim().toUpperCase();
+        console.log('Correct answer loaded:', correctAnswer);
+      }
+    } catch(e) {
+      console.error('Error loading answers.txt:', e);
+    }
   }
-}
 
-window.onload = async () => {
-  await loadAnswer();
-  createMaze();
+  function checkAnswer() {
+    if(selectedLetters.length !== 10) {
+      showMessage("You must select exactly 10 letters.", true);
+      return;
+    }
 
-  if(localStorage.getItem("puzzle6") === "solved") {
-    const message = document.getElementById('result');
-    message.style.color = "#44ff44";
-    message.innerText = "178 2 21";
+    const userAnswer = selectedLetters.map(i => mazeLetters[i]).join('');
+    if(userAnswer === correctAnswer) {
+      localStorage.setItem("puzzle6", "solved");
+      showMessage("178 2 21");
+    } else {
+      showMessage("Try again.", true);
+    }
   }
-};
 
+  window.onload = async () => {
+    await loadAnswer();
+    createMaze();
+
+    if(localStorage.getItem("puzzle6") === "solved") {
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.color = "#44ff44";
+      resultDiv.textContent = "178 2 21";
+    }
+  };
 </script>
 </body>
 </html>

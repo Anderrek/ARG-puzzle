@@ -21,6 +21,10 @@
       animation: fadeInUp 1s ease forwards;
     }
 
+    h3 {
+      align-items: center;
+    }
+
     .fade-delay-1 { animation-delay: 0.3s; }
     .fade-delay-2 { animation-delay: 0.6s; }
     .fade-delay-3 { animation-delay: 0.9s; }
@@ -110,9 +114,8 @@
   <button class="back-button fade-in fade-delay-1" onclick="window.location.href='index.html'">← Back</button>
   <h1 class="fade-in fade-delay-2">Puzzle 2</h1>
   <div class="playfair-box fade-in fade-delay-3">
-    <h3>PLAYFAIR</h3>
+    <h3>PLAYFAIR - BKKIMSGMRTSZ </h3>
     <div class="grid" id="grid">
-      <!-- Litery planszy zostaną wstawione przez JS -->
     </div>
   </div>
 
@@ -122,10 +125,9 @@
 
   <script>
     const keyword = "PLAYFAIR";
-    const alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"; // J pominięte
+    const alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
     let key = "";
 
-    // Generate Playfair key grid
     function generateGrid() {
       const seen = new Set();
       let keyString = "";
@@ -175,7 +177,6 @@
         const message = document.getElementById('message');
         message.style.color = "#44ff44";
         message.innerText = "209 1 23";
-        // poprawka: uzywamy 'answer', nie 'answerInput'
         document.getElementById('answer').value = "sherlock";
       }
     };

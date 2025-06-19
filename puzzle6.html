@@ -167,41 +167,39 @@
       cell.dataset.idx = idx;
 
       cell.onclick = () => {
-        // If no letters selected, first must be 'W'
-        if(selectedLetters.length === 0) {
-          if(letter !== 'W') {
-            showMessage("You must start with 'W'.", true);
-            return;
-          }
-          selectCell(idx, cell);
-          return;
-        }
+  if(selectedLetters.length === 0) {
+    // Pierwsza litera musi być W lub G
+    if(letter !== 'W' && letter !== 'G') {
+      showMessage("You must start with 'W' or 'G'.", true);
+      return;
+    }
+    selectCell(idx, cell);
+    return;
+  }
 
-        // If letter already selected, deselect last only
-        if(selectedLetters.includes(idx)) {
-          if(idx === selectedLetters[selectedLetters.length - 1]) {
-            deselectLast();
-          } else {
-            showMessage("You can only deselect the last selected letter.", true);
-          }
-          return;
-        }
+  if(selectedLetters.includes(idx)) {
+    if(idx === selectedLetters[selectedLetters.length - 1]) {
+      deselectLast();
+    } else {
+      showMessage("You can only deselect the last selected letter.", true);
+    }
+    return;
+  }
 
-        // Check if clicked cell neighbors last selected
-        const lastIdx = selectedLetters[selectedLetters.length - 1];
-        if(!areNeighbors(lastIdx, idx)) {
-          showMessage("Select a neighboring letter.", true);
-          return;
-        }
+  const lastIdx = selectedLetters[selectedLetters.length - 1];
+  if(!areNeighbors(lastIdx, idx)) {
+    showMessage("Select a neighboring letter.", true);
+    return;
+  }
 
-        // Check length limit (10 letters max)
-        if(selectedLetters.length >= 10) {
-          showMessage("You can select only 10 letters.", true);
-          return;
-        }
+  if(selectedLetters.length >= 10) {
+    showMessage("You can select only 10 letters.", true);
+    return;
+  }
 
-        selectCell(idx, cell);
-      };
+  selectCell(idx, cell);
+};
+
 
       mazeContainer.appendChild(cell);
     });
@@ -254,19 +252,29 @@
   }
 
   function checkAnswer() {
-    if(selectedLetters.length !== 10) {
-      showMessage("You must select exactly 10 letters.", true);
-      return;
-    }
-
-    const userAnswer = selectedLetters.map(i => mazeLetters[i]).join('');
-    if(userAnswer === correctAnswer) {
-      localStorage.setItem("puzzle6", "solved");
-      showMessage("178 2 21");
-    } else {
-      showMessage("Try again.", true);
-    }
+  if(selectedLetters.length !== 10) {
+    showMessage("You must select exactly 10 letters.", true);
+    return;
   }
+
+  const userAnswer = selectedLetters.map(i => mazeLetters[i]).join('');
+  const firstLetter = userAnswer[0];
+  const lastLetter = userAnswer[userAnswer.length - 1];
+
+  if((firstLetter === 'W' && lastLetter !== 'G') ||
+     (firstLetter === 'G' && lastLetter !== 'W')) {
+    showMessage("If you start with 'W', you must end with 'G', and vice versa.", true);
+    return;
+  }
+
+  if(userAnswer === correctAnswer) {
+    localStorage.setItem("puzzle6", "solved");
+    showMessage("178 2 21");
+  } else {
+    showMessage("Try again.", true);
+  }
+}
+
 
   window.onload = async () => {
     await loadAnswer();

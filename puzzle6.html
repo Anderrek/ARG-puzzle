@@ -113,40 +113,108 @@
   <h1 class="fade-in fade-delay-2">Puzzle 6</h1>
   <div class="hint fade-in fade-delay-3"><br />Remember: M 🪞 N</div>
 
-  <div class="cipher-text fade-in fade-delay-4" aria-label="Ciphered biblical quote in Atbash cipher">
-  GSV OLIW RH NB HSVKSVIW
-  </div>
-
-  <input type="text" id="answerInput" placeholder="Enter the reference here" autocomplete="off" class="fade-in fade-delay-5" />
+  <div id="maze" class="fade-in fade-delay-4" style="display: grid; grid-template-columns: repeat(10, 40px); gap: 5px; user-select:none;"></div>
 
   <button onclick="checkAnswer()" class="fade-in fade-delay-6">Check Answer</button>
 
   <div id="result" class="fade-in fade-delay-7"></div>
 
 <script>
-  const correctAnswer = "psalm231";
+  const mazeLetters = [
+  'D','V','Z','I','V','S','R','M','T','O',
+  'W','E','A','R','E','H','I','I','N','G',
+  'A','S','D','F','G','H','J','K','L','Q',
+  'W','E','R','T','Y','U','I','O','P','A',
+  'S','D','F','G','H','J','K','L','Z','X',
+  'C','V','B','N','M','A','S','D','F','G',
+  'H','J','K','L','Q','W','E','A','R','E',
+  'H','I','I','N','G','Z','X','C','V','B',
+  'N','M','A','S','D','F','G','H','J','K',
+  'L','Q','W','E','R','T','Y','U','I','O',
+];
 
-  function checkAnswer() {
-    const input = document.getElementById('answerInput').value.trim().toLowerCase();
-    const message = document.getElementById('result');
-    if(input === correctAnswer) {
-      localStorage.setItem("puzzle6", "solved");
-      message.style.color = "#44ff44";
-      message.innerText = "178 2 21";
-    } else {
-      message.style.color = "#ff4444";
-      message.innerText = "Try again.";
+let selectedLetters = [];
+
+const mazeContainer = document.getElementById('maze');
+
+function createMaze() {
+  mazeLetters.forEach((letter, idx) => {
+    const cell = document.createElement('div');
+    cell.textContent = letter;
+    cell.style.backgroundColor = '#111';
+    cell.style.color = '#eee';
+    cell.style.border = '1px solid #333';
+    cell.style.display = 'flex';
+    cell.style.justifyContent = 'center';
+    cell.style.alignItems = 'center';
+    cell.style.cursor = 'pointer';
+    cell.style.fontWeight = 'bold';
+    cell.style.userSelect = 'none';
+    cell.style.fontSize = '20px';
+    cell.dataset.idx = idx;
+
+    cell.onclick = () => {
+      if(selectedLetters.includes(idx)) {
+        // Odznaczanie liter
+        selectedLetters = selectedLetters.filter(i => i !== idx);
+        cell.style.backgroundColor = '#111';
+      } else {
+        selectedLetters.push(idx);
+        cell.style.backgroundColor = '#44ff44';
+      }
+      updateSelectedText();
+    };
+
+    mazeContainer.appendChild(cell);
+  });
+}
+
+function updateSelectedText() {
+  const selectedStr = selectedLetters.map(i => mazeLetters[i]).join('');
+  document.getElementById('result').innerText = selectedStr;
+}
+
+// Hasło wczytamy dynamicznie (6 linijka z answers.txt)
+let correctAnswer = "";
+
+async function loadAnswer() {
+  try {
+    const response = await fetch('answers.txt');
+    const text = await response.text();
+    const lines = text.split('\n');
+    if(lines.length >= 6) {
+      correctAnswer = lines[5].trim().toUpperCase();
+      console.log('Correct answer loaded:', correctAnswer);
     }
+  } catch(e) {
+    console.error('Error loading answers.txt:', e);
   }
+}
 
-  window.onload = () => {
-    if(localStorage.getItem("puzzle6") === "solved") {
-      const message = document.getElementById('result');
-      message.style.color = "#44ff44";
-      message.innerText = "178 2 21";
-      document.getElementById('answerInput').value = correctAnswer;
-    }
-  };
+function checkAnswer() {
+  const message = document.getElementById('result');
+  const userAnswer = selectedLetters.map(i => mazeLetters[i]).join('');
+  if(userAnswer === correctAnswer) {
+    localStorage.setItem("puzzle6", "solved");
+    message.style.color = "#44ff44";
+    message.innerText = "178 2 21";
+  } else {
+    message.style.color = "#ff4444";
+    message.innerText = "Try again.";
+  }
+}
+
+window.onload = async () => {
+  await loadAnswer();
+  createMaze();
+
+  if(localStorage.getItem("puzzle6") === "solved") {
+    const message = document.getElementById('result');
+    message.style.color = "#44ff44";
+    message.innerText = "178 2 21";
+  }
+};
+
 </script>
 </body>
 </html>

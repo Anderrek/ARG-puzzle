@@ -114,7 +114,7 @@
   <button class="back-button fade-in fade-delay-1" onclick="window.location.href='index.html'">← Back</button>
   <h1 class="fade-in fade-delay-2">Puzzle 2</h1>
   <div class="playfair-box fade-in fade-delay-3">
-    <h3>PLAYFAIR - BKKIMSGMRTSZ </h3>
+    <h3>PLAYFAIR - BKKIMSGMRTSZ</h3>
     <div class="grid" id="grid">
     </div>
   </div>
@@ -127,6 +127,9 @@
     const keyword = "PLAYFAIR";
     const alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
     let key = "";
+    let currentInput = "";
+    let correctAnswer = null;
+    let isAnswerLoaded = false;
 
     function generateGrid() {
       const seen = new Set();
@@ -172,12 +175,65 @@
 
     generateGrid();
 
+
+
+    fetch("answers.txt")
+    .then(response => {
+      if (!response.ok) throw new Error("Błąd sieci");
+      return response.text();
+    })
+    .then(text => {
+      const lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+      correctAnswer = lines[1];
+      if (correctAnswer) {
+        isAnswerLoaded = true;
+        console.log("Odpowiedź wczytana:", correctAnswer); // Dla debugowania
+      } else {
+        document.getElementById("message").innerText = "Błąd: Brak odpowiedzi w pliku.";
+      }
+    })
+    .catch(error => {
+      console.error("Nie można wczytać pliku answers.txt:", error);
+      document.getElementById("message").innerText = "Błąd ładowania odpowiedzi.";
+    });
+
+  function checkAnswer() {
+    if (!isAnswerLoaded) {
+      document.getElementById("message").innerText = "Odpowiedź jeszcze się ładuje. Poczekaj chwilę.";
+      return;
+    }
+
+    function pressKey(char) {
+      if (char === "←") {
+        currentInput = currentInput.slice(0, -1);
+      } else {
+        currentInput += char;
+      }
+      document.getElementById("inputDisplay").innerText = currentInput;
+    }
+
+    if (currentInput.toUpperCase() === correctAnswer.toUpperCase()) {
+      const message = document.getElementById("message");
+      message.style.color = "44ff44";
+      message.innerText = "209 1 23";
+      localStorage.setItem("puzzle2", "solved");
+    } else {
+      const message = document.getElementById("message");
+      message.style.color = "#ff4444";
+      message.innerText = "Try again.";
+    }
+  }
+
+
+
+    
+
     window.onload = () => {
       if(localStorage.getItem("puzzle2") === "solved") {
         const message = document.getElementById('message');
         message.style.color = "#44ff44";
         message.innerText = "209 1 23";
-        document.getElementById('answer').value = "sherlock";
+        document.getElementById('answer').value = correctAnswer;
       }
     };
   </script>

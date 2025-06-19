@@ -221,13 +221,20 @@
     }
   }
   window.onload = () => {
-    if(localStorage.getItem("puzzle1") === "solved") {
-      const message = document.getElementById('message');
-      message.style.color = "#44ff44";
-      message.innerText = "254 2 59";
-      document.getElementById('answerInput').value = correctAnswer;
-    }
-  };
+  if(localStorage.getItem("puzzle1") === "solved") {
+    const waitForAnswer = setInterval(() => {
+      if (isAnswerLoaded) {
+        clearInterval(waitForAnswer);
+        currentInput = correctAnswer;
+        document.getElementById("inputDisplay").innerText = correctAnswer;
+        const message = document.getElementById('message');
+        message.style.color = "#44ff44";
+        message.innerText = "254 2 59";
+      }
+    }, 100);
+  }
+};
+
     
 </script>
 </body>

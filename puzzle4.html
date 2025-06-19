@@ -125,11 +125,19 @@
 
 <script>
   let correctAnswer = "";
+  let isAnswerReady = false;
 
   function checkAnswer() {
     const input = document.getElementById('answerInput').value.trim().toUpperCase();
     const message = document.getElementById('result');
-    if(input === correctAnswer && correctAnswer !== "") {
+
+    if (!isAnswerReady) {
+      message.style.color = "#ff4444";
+      message.innerText = "Loading... Try again in a moment.";
+      return;
+    }
+
+    if (input === correctAnswer && correctAnswer !== "") {
       localStorage.setItem("puzzle4", "solved");
       message.style.color = "#44ff44";
       message.innerText = "141 3 1";
@@ -145,8 +153,9 @@
       .then(text => {
         const lines = text.split(/\r?\n/);
         correctAnswer = (lines[3] || "").trim().toUpperCase();
+        isAnswerReady = true;
 
-        if(localStorage.getItem("puzzle4") === "solved") {
+        if (localStorage.getItem("puzzle4") === "solved") {
           document.getElementById('answerInput').value = correctAnswer;
           const message = document.getElementById('result');
           message.style.color = "#44ff44";
@@ -159,6 +168,5 @@
   };
 </script>
 
-</script>
 </body>
 </html>

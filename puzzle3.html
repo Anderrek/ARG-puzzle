@@ -114,38 +114,24 @@
   let morseSequence = [];
   let morseIndex = 0;
 
-  let currentSymbolIndex = 0;
-
-function animateLamp() {
-  if (currentSymbolIndex >= morseSequence.length) {
-    // Koniec wiadomości — zrób dłuższą pauzę, np. 2.5 sekundy
-    currentSymbolIndex = 0;
-    lamp.classList.remove("dot", "dash");
-    setTimeout(animateLamp, 2500);
-    return;
+  function animateLamp() {
+    const symbol = morseSequence[morseIndex];
+    if (symbol === ".") {
+      lamp.classList.add("on");
+      setTimeout(() => {
+        lamp.classList.remove("on");
+        setTimeout(next, 200);
+      }, 300);
+    } else if (symbol === "-") {
+      lamp.classList.add("on");
+      setTimeout(() => {
+        lamp.classList.remove("on");
+        setTimeout(next, 300);
+      }, 800);
+    } else {
+      setTimeout(next, 400); // space between letters
+    }
   }
-
-  const symbol = morseSequence[currentSymbolIndex];
-  lamp.classList.remove("dot", "dash");
-
-  if (symbol === ".") {
-    lamp.classList.add("dot");
-    setTimeout(() => {
-      lamp.classList.remove("dot");
-      setTimeout(animateLamp, 300);
-    }, 300);
-  } else if (symbol === "-") {
-    lamp.classList.add("dash");
-    setTimeout(() => {
-      lamp.classList.remove("dash");
-      setTimeout(animateLamp, 300);
-    }, 900);
-  } else if (symbol === " ") {
-    setTimeout(animateLamp, 600); // przerwa między literami
-  }
-
-  currentSymbolIndex++;
-}
 
   function next() {
     morseIndex = (morseIndex + 1) % morseSequence.length;

@@ -173,8 +173,7 @@
   let currentInput = "";
   let correctAnswer = null;
   let isAnswerLoaded = false;
-
-  // Wczytaj odpowiedź z pliku
+    
   fetch("answers.txt")
     .then(response => {
       if (!response.ok) throw new Error("Błąd sieci");
@@ -195,12 +194,6 @@
       document.getElementById("message").innerText = "Błąd ładowania odpowiedzi.";
     });
 
-  function checkAnswer() {
-    if (!isAnswerLoaded) {
-      document.getElementById("message").innerText = "Odpowiedź jeszcze się ładuje. Poczekaj chwilę.";
-      return;
-    }
-
     function pressKey(char) {
       if (char === "←") {
         currentInput = currentInput.slice(0, -1);
@@ -208,6 +201,12 @@
         currentInput += char;
       }
       document.getElementById("inputDisplay").innerText = currentInput;
+    }
+
+  function checkAnswer() {
+    if (!isAnswerLoaded) {
+      document.getElementById("message").innerText = "Odpowiedź jeszcze się ładuje. Poczekaj chwilę.";
+      return;
     }
 
     if (currentInput.toUpperCase() === correctAnswer.toUpperCase()) {

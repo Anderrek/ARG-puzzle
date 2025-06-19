@@ -21,10 +21,6 @@
       animation: fadeInUp 1s ease forwards;
     }
 
-    h3 {
-      align-items: center;
-    }
-
     .fade-delay-1 { animation-delay: 0.3s; }
     .fade-delay-2 { animation-delay: 0.6s; }
     .fade-delay-3 { animation-delay: 0.9s; }
@@ -114,8 +110,9 @@
   <button class="back-button fade-in fade-delay-1" onclick="window.location.href='index.html'">← Back</button>
   <h1 class="fade-in fade-delay-2">Puzzle 2</h1>
   <div class="playfair-box fade-in fade-delay-3">
-    <h3>PLAYFAIR - BKKIMSGMRTSZ</h3>
+    <h3>PLAYFAIR</h3>
     <div class="grid" id="grid">
+      <!-- Litery planszy zostaną wstawione przez JS -->
     </div>
   </div>
 
@@ -125,12 +122,10 @@
 
   <script>
     const keyword = "PLAYFAIR";
-    const alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
+    const alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"; // J pominięte
     let key = "";
-    let currentInput = "";
-    let correctAnswer = null;
-    let isAnswerLoaded = false;
 
+    // Generate Playfair key grid
     function generateGrid() {
       const seen = new Set();
       let keyString = "";
@@ -160,67 +155,28 @@
       }
     }
 
+    function checkAnswer() {
+      const input = document.getElementById("answer").value.trim().toLowerCase();
+      const correctAnswer = "sherlock";
+      const message = document.getElementById("message");
+
+      if (input === correctAnswer) {
+        localStorage.setItem("puzzle2", "solved");
+        message.innerText = "209 1 23";
+      } else {
+        message.innerText = "Try again.";
+      }
+    }
+
     generateGrid();
-
-
-
-    fetch("answers.txt")
-    .then(response => {
-      if (!response.ok) throw new Error("Błąd sieci");
-      return response.text();
-    })
-    .then(text => {
-      const lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
-      correctAnswer = lines[1];
-      if (correctAnswer) {
-        isAnswerLoaded = true;
-        console.log("Odpowiedź wczytana:", correctAnswer); // Dla debugowania
-      } else {
-        document.getElementById("message").innerText = "Błąd: Brak odpowiedzi w pliku.";
-      }
-    })
-    .catch(error => {
-      console.error("Nie można wczytać pliku answers.txt:", error);
-      document.getElementById("message").innerText = "Błąd ładowania odpowiedzi.";
-    });
-
-  function checkAnswer() {
-    if (!isAnswerLoaded) {
-      document.getElementById("message").innerText = "Odpowiedź jeszcze się ładuje. Poczekaj chwilę.";
-      return;
-    }
-
-    function pressKey(char) {
-      if (char === "←") {
-        currentInput = currentInput.slice(0, -1);
-      } else {
-        currentInput += char;
-      }
-      document.getElementById("inputDisplay").innerText = currentInput;
-    }
-
-    if (currentInput.toUpperCase() === correctAnswer.toUpperCase()) {
-      const message = document.getElementById("message");
-      message.style.color = "44ff44";
-      message.innerText = "209 1 23";
-      localStorage.setItem("puzzle2", "solved");
-    } else {
-      const message = document.getElementById("message");
-      message.style.color = "#ff4444";
-      message.innerText = "Try again.";
-    }
-  }
-
-
-
-    
 
     window.onload = () => {
       if(localStorage.getItem("puzzle2") === "solved") {
         const message = document.getElementById('message');
         message.style.color = "#44ff44";
         message.innerText = "209 1 23";
-        document.getElementById('answer').value = correctAnswer;
+        // poprawka: uzywamy 'answer', nie 'answerInput'
+        document.getElementById('answer').value = "sherlock";
       }
     };
   </script>

@@ -160,19 +160,6 @@
       }
     }
 
-    function checkAnswer() {
-      const input = document.getElementById("answer").value.trim().toLowerCase();
-      const correctAnswer = "sherlock";
-      const message = document.getElementById("message");
-
-      if (input === correctAnswer) {
-        localStorage.setItem("puzzle2", "solved");
-        message.innerText = "209 1 23";
-      } else {
-        message.innerText = "Try again.";
-      }
-    }
-
     generateGrid();
 
 

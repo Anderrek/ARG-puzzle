@@ -6,21 +6,11 @@
 <title>Puzzle 5</title>
 <style>
   @keyframes fadeInUp {
-    0% {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
 
-  .fade-in {
-    opacity: 0;
-    animation: fadeInUp 1s ease forwards;
-  }
-
+  .fade-in { opacity: 0; animation: fadeInUp 1s ease forwards; }
   .fade-delay-1 { animation-delay: 0.3s; }
   .fade-delay-2 { animation-delay: 0.6s; }
   .fade-delay-3 { animation-delay: 0.9s; }
@@ -40,9 +30,9 @@
     min-height: 100vh;
     margin: 0;
   }
-  h1 {
-    margin-bottom: 10px;
-  }
+
+  h1 { margin-bottom: 10px; }
+
   .hint {
     font-size: 14px;
     color: #999;
@@ -51,6 +41,7 @@
     max-width: 400px;
     text-align: center;
   }
+
   .door-image {
     width: 300px;
     height: 400px;
@@ -59,6 +50,7 @@
     margin-bottom: 20px;
     box-shadow: 0 0 15px #222;
   }
+
   .coordinates {
     background-color: #111;
     border: 1px solid #333;
@@ -70,6 +62,7 @@
     text-align: center;
     user-select: none;
   }
+
   input[type="text"] {
     font-family: 'Courier New', monospace;
     font-size: 18px;
@@ -78,6 +71,7 @@
     width: 280px;
     color: #222;
   }
+
   button {
     margin-top: 20px;
     padding: 10px 25px;
@@ -89,9 +83,9 @@
     transition: background-color 0.3s ease;
     user-select: none;
   }
-  button:hover {
-    background-color: #444;
-  }
+
+  button:hover { background-color: #444; }
+
   #result {
     margin-top: 20px;
     font-size: 18px;
@@ -100,44 +94,58 @@
     color: #44ff44;
     transition: opacity 0.5s ease;
   }
+
   .back-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      padding: 10px 16px;
-      font-size: 14px;
-      background-color: #111;
-      color: #ccc;
-      border: 1px solid #444;
-      cursor: pointer;
-      user-select: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 16px;
+    font-size: 14px;
+    background-color: #111;
+    color: #ccc;
+    border: 1px solid #444;
+    cursor: pointer;
+    user-select: none;
   }
 </style>
 </head>
 <body>
   <button class="back-button fade-in fade-delay-1" onclick="window.location.href='index.html'">← Back</button>
   <h1 class="fade-in fade-delay-2">Puzzle 5</h1>
-  <div class="hint fade-in fade-delay-3">[Your hint goes here]</div>
+
+  <div class="hint fade-in fade-delay-3">
+    Każde współrzędne prowadzą do miasta. Pierwsze litery ich nazw ułożą się w odpowiedź.<br />Coś może Ci się wydawać... brakujące.
+  </div>
 
   <div class="door-image fade-in fade-delay-4" aria-label="Old door image"></div>
 
   <div class="coordinates fade-in fade-delay-5" aria-label="Coordinates hint">
-    51°50'10.0"N 0°12'41.0"W
+    18.2750°N, -88.8675°W<br />
+    -37.8136°S, 144.9631°E<br />
+    61.2181°N, -149.9003°W<br />
+    64.1466°N, -21.9426°W<br />
+    47.6062°N, -122.3321°W<br />
+    35.6895°N, 139.6917°E<br />
+    60.1699°N, 24.9384°E<br />
+    55.9533°N, -3.1883°W<br />
+    1.3521°N, 103.8198°E<br />
+    48.8566°N, 2.3522°E<br />
+    59.9139°N, 10.7522°E<br />
+    43.6510°N, -79.3470°W
   </div>
 
   <input type="text" id="answerInput" placeholder="Enter your answer here" autocomplete="off" class="fade-in fade-delay-6" />
-
   <button onclick="checkAnswer()" class="fade-in fade-delay-6">Check Answer</button>
-
   <div id="result" class="fade-in fade-delay-7"></div>
 
 <script>
-  const correctAnswer = "BIGBEN";
+  let correctAnswer = "";
 
   function checkAnswer() {
     const input = document.getElementById('answerInput').value.trim().toUpperCase();
     const message = document.getElementById('result');
-    if(input === correctAnswer) {
+
+    if (input === correctAnswer && correctAnswer !== "") {
       localStorage.setItem("puzzle5", "solved");
       message.style.color = "#44ff44";
       message.innerText = "326 2 8";
@@ -148,12 +156,22 @@
   }
 
   window.onload = () => {
-    if(localStorage.getItem("puzzle5") === "solved") {
-      const message = document.getElementById('result');
-      message.style.color = "#44ff44";
-      message.innerText = "326 2 8";
-      document.getElementById('answerInput').value = correctAnswer;
-    }
+    fetch('answers.txt')
+      .then(response => response.text())
+      .then(text => {
+        const lines = text.split(/\r?\n/);
+        correctAnswer = (lines[4] || "").trim().toUpperCase();
+
+        if (localStorage.getItem("puzzle5") === "solved") {
+          document.getElementById('answerInput').value = correctAnswer;
+          const message = document.getElementById('result');
+          message.style.color = "#44ff44";
+          message.innerText = "326 2 8";
+        }
+      })
+      .catch(err => {
+        console.error("Błąd podczas pobierania pliku answers.txt:", err);
+      });
   };
 </script>
 </body>

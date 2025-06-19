@@ -57,7 +57,7 @@
     font-size: 18px;
     letter-spacing: 2px;
     margin-bottom: 20px;
-    width: 500px;
+    width: 450px;
     white-space: pre-wrap;
     user-select: none;
   }
@@ -123,12 +123,12 @@
   <div id="result" class="fade-in fade-delay-6"></div>
 
 <script>
-  const correctAnswer = "HELLOBINARYWORLD!";
+  let correctAnswer = "";
 
   function checkAnswer() {
     const input = document.getElementById('answerInput').value.trim().toUpperCase();
     const message = document.getElementById('result');
-    if(input === correctAnswer) {
+    if(input === correctAnswer && correctAnswer !== "") {
       localStorage.setItem("puzzle4", "solved");
       message.style.color = "#44ff44";
       message.innerText = "141 3 1";
@@ -139,13 +139,25 @@
   }
 
   window.onload = () => {
-    if(localStorage.getItem("puzzle4") === "solved") {
-      const message = document.getElementById('result');
-      message.style.color = "#44ff44";
-      message.innerText = "141 3 1";
-      document.getElementById('answerInput').value = correctAnswer;
-    }
+    fetch('answers.txt')
+      .then(response => response.text())
+      .then(text => {
+        const lines = text.split(/\r?\n/);
+        correctAnswer = (lines[3] || "").trim().toUpperCase();
+
+        if(localStorage.getItem("puzzle4") === "solved") {
+          document.getElementById('answerInput').value = correctAnswer;
+          const message = document.getElementById('result');
+          message.style.color = "#44ff44";
+          message.innerText = "141 3 1";
+        }
+      })
+      .catch(err => {
+        console.error("Błąd podczas pobierania pliku answers.txt:", err);
+      });
   };
+</script>
+
 </script>
 </body>
 </html>

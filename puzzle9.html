@@ -171,7 +171,21 @@
   let currentAngle = 0;
   let codeSequence = [];
   const correctCode = ["4", "9", "3"];
-  const secretCode = ["5", "10", "12"];
+  let secretCode = [];
+
+  fetch('answers.txt')
+  .then(response => response.text())
+  .then(text => {
+    const lines = text.split('\n');
+    const line10 = lines[9]?.trim();
+    if (line10) {
+      secretCode = line10.split(/\s+/);
+    }
+  })
+  .catch(error => {
+    console.error('Nie udało się wczytać secretCode:', error);
+  });
+
 
   function getAngle(cx, cy, ex, ey) {
     let dy = ey - cy;

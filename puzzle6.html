@@ -247,19 +247,8 @@
 
   function checkAnswer() {
   const userAnswer = selectedLetters.map(i => mazeLetters[i]).join('');
-  if (userAnswer.length !== 10) {
-    showMessage("You must select exactly 10 letters.", true);
-    return;
-  }
-
   const firstLetter = userAnswer[0];
   const lastLetter = userAnswer[userAnswer.length - 1];
-
-  if ((firstLetter === 'W' && lastLetter !== 'G') ||
-      (firstLetter === 'G' && lastLetter !== 'W')) {
-    showMessage("If you start with 'W', you must end with 'G', and vice versa.", true);
-    return;
-  }
 
   if (userAnswer === correctAnswer) {
     localStorage.setItem("puzzle6", "solved");

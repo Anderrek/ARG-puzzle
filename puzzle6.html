@@ -121,14 +121,14 @@
     Don’t turn around — not once again.<br />
     R walks the even, A the odd,<br />
     Their trail obeys a stranger god.<br />
-
     On edges only W and G,<br />
     They watch the maze — they hold the key.<br />
     The message hides a missing mark,<br />
     A silence buried in the dark.<br />
-
     Two eyes together you must find,<br />
-    Between the fourth and ninth they’re lined.
+    Between the fourth and ninth they’re lined.<br />
+    The E’s, now sundered, bear the weight,<br />
+    Of two that walk and separate.
   </div>
 
   <div id="maze" class="fade-in fade-delay-4"></div>
@@ -176,18 +176,8 @@
       cell.dataset.idx = idx;
 
       cell.onclick = () => {
-  if(selectedLetters.length === 0) {
-    // Pierwsza litera musi być W lub G
-    if(letter !== 'W' && letter !== 'G') {
-      showMessage("You must start with 'W' or 'G'.", true);
-      return;
-    }
-    selectCell(idx, cell);
-    return;
-  }
-
-  if(selectedLetters.includes(idx)) {
-    if(idx === selectedLetters[selectedLetters.length - 1]) {
+  if (selectedLetters.includes(idx)) {
+    if (idx === selectedLetters[selectedLetters.length - 1]) {
       deselectLast();
     } else {
       showMessage("You can only deselect the last selected letter.", true);
@@ -195,19 +185,17 @@
     return;
   }
 
-  const lastIdx = selectedLetters[selectedLetters.length - 1];
-  if(!areNeighbors(lastIdx, idx)) {
-    showMessage("Select a neighboring letter.", true);
-    return;
-  }
-
-  if(selectedLetters.length >= 10) {
-    showMessage("You can select only 10 letters.", true);
-    return;
+  if (selectedLetters.length > 0) {
+    const lastIdx = selectedLetters[selectedLetters.length - 1];
+    if (!areNeighbors(lastIdx, idx)) {
+      showMessage("Select a neighboring letter.", true);
+      return;
+    }
   }
 
   selectCell(idx, cell);
 };
+
 
 
       mazeContainer.appendChild(cell);
@@ -261,10 +249,16 @@
   }
 
   function checkAnswer() {
-  if(selectedLetters.length !== 10) {
-    showMessage("You must select exactly 10 letters.", true);
-    return;
+  const userAnswer = selectedLetters.map(i => mazeLetters[i]).join('');
+
+  if (userAnswer === correctAnswer) {
+    localStorage.setItem("puzzle6", "solved");
+    showMessage("178 2 21");
+  } else {
+    showMessage("Try again.", true);
   }
+}
+
 
   const userAnswer = selectedLetters.map(i => mazeLetters[i]).join('');
   const firstLetter = userAnswer[0];

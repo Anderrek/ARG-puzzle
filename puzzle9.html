@@ -216,27 +216,29 @@
   }
 
   function checkSequence() {
-    if (codeSequence.join('') === correctCode.join('')) {
-      result.style.color = "#44ff44";
-      result.style.fontWeight = "bold";
-      result.innerText = "265 1 26";
-      localStorage.setItem("puzzle9", "solved");
-    } else if (codeSequence.join('') === secretCode.join('')) {
-      result.style.color = "#44bbff";
-      result.style.fontWeight = "bold";
-      result.innerText = secretResponse;
-    } else {
-      result.style.color = "#ff4444";
-      result.style.fontSize = "18px";
-      result.style.fontWeight = "bold";
-      result.innerText = "Wrong code. Try again.";
-      setTimeout(() => {
-        result.innerText = "";
-        codeSequence = [];
-        updateCodeDisplay();
-      }, 1500);
-    }
+  if (codeSequence.join('') === secretCode.join('')) {
+    result.style.color = "#44bbff";
+    result.style.fontWeight = "bold";
+    result.innerText = secretResponse;
+    localStorage.setItem("puzzle9", "solved");
+  } else if (codeSequence.join('') === correctCode.join('')) {
+    result.style.color = "#44ff44";
+    result.style.fontWeight = "bold";
+    result.innerText = secretResponse || "265 1 26";
+    localStorage.setItem("puzzle9", "solved");
+  } else {
+    result.style.color = "#ff4444";
+    result.style.fontSize = "18px";
+    result.style.fontWeight = "bold";
+    result.innerText = "Wrong code. Try again.";
+    setTimeout(() => {
+      result.innerText = "";
+      codeSequence = [];
+      updateCodeDisplay();
+    }, 1500);
   }
+}
+
 
   hand.addEventListener('mousedown', (e) => {
     dragging = true;

@@ -147,31 +147,37 @@
   <button onclick="checkAnswer()" class="fade-in fade-delay-6">Submit</button>
 
   <div id="result" class="fade-in fade-delay-7"></div>
-<!-- final -->
+  
 <script>
-  const answers = ["lost", "find", "brother"];
+  let correctAnswer = "";
+
+  fetch('answers.txt')
+    .then(response => response.text())
+    .then(text => {
+      const lines = text.split('\n');
+      if (lines.length >= 8) {
+        correctAnswer = lines[7].toLowerCase().replace(/\s/g, '');
+      }
+    })
+    .catch(error => {
+      console.error('Błąd przy ładowaniu answers.txt:', error);
+    });
 
   function checkAnswer() {
     const input = document.getElementById('answerInput').value.toLowerCase().replace(/\s/g, '');
     const message = document.getElementById('result');
-    const userWords = input.split(',');
-
-    if(userWords.length !== 3) {
-      message.style.color = "#ff4444";
-      message.innerText = "Please enter exactly three words, separated by commas.";
-      return;
-    }
-
-    const trimmedWords = userWords.map(w => w.trim());
-
-    // Normalize 'brother' from number-substitution 'br0th3r'
+    
     const normalize = w => w.replace(/0/g, 'o').replace(/3/g, 'e');
 
-    const normalizedUserWords = trimmedWords.map(normalize);
+    if (!correctAnswer) {
+      message.style.color = "#ff4444";
+      message.innerText = "Answer not loaded yet. Try again in a moment.";
+      return;
+    }
+    // final
+    const isCorrect = normalize(input) === normalize(correctAnswer);
 
-    const isCorrect = answers.every(word => normalizedUserWords.includes(word));
-
-    if(isCorrect) {
+    if (isCorrect) {
       message.style.color = "#44ff44";
       message.innerText = "325 2 57";
       localStorage.setItem("puzzle8", "solved");
@@ -182,13 +188,16 @@
   }
 
   window.onload = () => {
-    if(localStorage.getItem("puzzle8") === "solved") {
-      const message = document.getElementById('result');
+    const input = document.getElementById('answerInput');
+    const message = document.getElementById('result');
+
+    if (localStorage.getItem("puzzle8") === "solved") {
       message.style.color = "#44ff44";
       message.innerText = "325 2 57";
-      document.getElementById('answerInput').value = answers.join(', ');
+      input.value = correctAnswer;
     }
   };
 </script>
+
 </body>
 </html>

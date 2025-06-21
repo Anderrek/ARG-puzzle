@@ -51,4 +51,13 @@
   <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
   <a id="secret-btn" href="https://drive.google.com/drive/folders/1SSEwIUq7_ZM8bSk4y1rKwtvMZULvcah9"></a>
 </body>
+  <script>
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'i' || e.key === 'I')) {
+      e.preventDefault();
+    }
+  });
+</script>
+
 </html>

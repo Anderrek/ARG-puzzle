@@ -183,7 +183,7 @@
       secretCode = line10.split(/\s+/);
     }
     if (line11) {
-      secretResponse = line11;
+      secretResponse = line11.split(/\s+/);
     }
   })
   .catch(error => {
@@ -216,7 +216,7 @@
   }
 
   function checkSequence() {
-  if (codeSequence.join('') === secretCode.join('')) {
+  if (codeSequence.join('') === codeSequence.join('')) {
     result.style.color = "#44bbff";
     result.style.fontWeight = "bold";
     result.innerText = secretResponse;

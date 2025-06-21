@@ -173,57 +173,73 @@
   <script>
   let currentInput = "";
   let correctAnswer = null;
+  let secretMessage = null;
   let isAnswerLoaded = false;
-    
+  let isSecretLoaded = false;
+
+  // Wczytaj odpowiedź
   fetch("answers.txt")
     .then(response => {
       if (!response.ok) throw new Error("Błąd sieci");
       return response.text();
     })
     .then(text => {
-  const lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
-  correctAnswer = lines[0];
-  if (correctAnswer) {
-    isAnswerLoaded = true;
-    console.log("Odpowiedź wczytana:", correctAnswer);
-
-    if (localStorage.getItem("puzzle1") === "solved") {
-      currentInput = correctAnswer;
-      document.getElementById("inputDisplay").innerText = correctAnswer;
-      const message = document.getElementById("message");
-      message.style.color = "#44ff44";
-      message.innerText = "254 2 58";
-    }
-
-  } else {
-    document.getElementById("message").innerText = "Błąd: Brak odpowiedzi w pliku.";
-  }
-})
-
+      const lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+      correctAnswer = lines[0];
+      if (correctAnswer) {
+        isAnswerLoaded = true;
+        console.log("Odpowiedź wczytana:", correctAnswer);
+        tryShowSolvedMessage();
+      } else {
+        document.getElementById("message").innerText = "Błąd: Brak odpowiedzi w pliku.";
+      }
+    })
     .catch(error => {
       console.error("Nie można wczytać pliku answers.txt:", error);
       document.getElementById("message").innerText = "Błąd ładowania odpowiedzi.";
     });
 
-    function pressKey(char) {
-      if (char === "←") {
-        currentInput = currentInput.slice(0, -1);
+  // Wczytaj wiadomość końcową
+  fetch("top_secret.txt")
+    .then(response => {
+      if (!response.ok) throw new Error("Błąd sieci");
+      return response.text();
+    })
+    .then(text => {
+      const lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+      secretMessage = lines[0];
+      if (secretMessage) {
+        isSecretLoaded = true;
+        console.log("Sekretna wiadomość wczytana:", secretMessage);
+        tryShowSolvedMessage();
       } else {
-        currentInput += char;
+        document.getElementById("message").innerText = "Błąd: Brak wiadomości w pliku.";
       }
-      document.getElementById("inputDisplay").innerText = currentInput;
+    })
+    .catch(error => {
+      console.error("Nie można wczytać pliku top_secret.txt:", error);
+      document.getElementById("message").innerText = "Błąd ładowania wiadomości.";
+    });
+
+  function pressKey(char) {
+    if (char === "←") {
+      currentInput = currentInput.slice(0, -1);
+    } else {
+      currentInput += char;
     }
+    document.getElementById("inputDisplay").innerText = currentInput;
+  }
 
   function checkAnswer() {
-    if (!isAnswerLoaded) {
-      document.getElementById("message").innerText = "Odpowiedź jeszcze się ładuje. Poczekaj chwilę.";
+    if (!isAnswerLoaded || !isSecretLoaded) {
+      document.getElementById("message").innerText = "Dane się jeszcze ładują. Poczekaj chwilę.";
       return;
     }
 
     if (currentInput.toUpperCase() === correctAnswer.toUpperCase()) {
       const message = document.getElementById("message");
-      message.style.color = "44ff44";
-      message.innerText = "254 2 58";
+      message.style.color = "#44ff44";
+      message.innerText = secretMessage;
       localStorage.setItem("puzzle1", "solved");
     } else {
       const message = document.getElementById("message");
@@ -231,22 +247,26 @@
       message.innerText = "Try again.";
     }
   }
+
+  function tryShowSolvedMessage() {
+    if (localStorage.getItem("puzzle1") === "solved" && isAnswerLoaded && isSecretLoaded) {
+      currentInput = correctAnswer;
+      document.getElementById("inputDisplay").innerText = correctAnswer;
+      const message = document.getElementById("message");
+      message.style.color = "#44ff44";
+      message.innerText = secretMessage;
+    }
+  }
+
   window.onload = () => {
-  if(localStorage.getItem("puzzle1") === "solved") {
-    const waitForAnswer = setInterval(() => {
-      if (isAnswerLoaded) {
-        clearInterval(waitForAnswer);
-        currentInput = correctAnswer;
-        document.getElementById("inputDisplay").innerText = correctAnswer;
-        const message = document.getElementById('message');
-        message.style.color = "#44ff44";
-        message.innerText = "254 2 58";
+    const interval = setInterval(() => {
+      if (isAnswerLoaded && isSecretLoaded) {
+        clearInterval(interval);
+        tryShowSolvedMessage();
       }
     }, 100);
-  }
-};
-
-    
+  };
 </script>
+
 </body>
 </html>

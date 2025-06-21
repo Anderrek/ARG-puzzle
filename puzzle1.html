@@ -236,7 +236,7 @@
       return;
     }
 
-    if (currentInput.toUpperCase() === correctAnswer.toUpperCase()) {
+    if (currentInput.toUpperCase() === correctAnswer.trim().toUpperCase()) {
       const message = document.getElementById("message");
       message.style.color = "#44ff44";
       message.innerText = secretMessage;

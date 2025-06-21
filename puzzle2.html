@@ -192,12 +192,15 @@
       await loadAnswer();
     }
 
-    if (input === correctAnswer) {
+   if (input === correctAnswer) {
       localStorage.setItem("puzzle2", "solved");
+      message.style.color = "#44ff44";
       message.innerText = "209 1 23";
     } else {
+      message.style.color = "#ff4444";
       message.innerText = "Try again.";
     }
+
   }
 
   generateGrid();

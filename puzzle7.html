@@ -1,80 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Puzzle 7</title>
-<style>
-  @keyframes fadeInUp {
-    0% {
-      opacity: 0;
-      transform: translateY(30px);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Puzzle 7</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #00ff88;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
     }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
+
+    .terminal {
+      background-color: #000000;
+      border: 2px solid #00ff88;
+      padding: 20px;
+      width: 90%;
+      max-width: 700px;
+      height: 400px;
+      overflow-y: auto;
+      box-shadow: 0 0 20px #00ff88;
     }
-  }
 
-  .fade-in {
-    opacity: 0;
-    animation: fadeInUp 1s ease forwards;
-  }
+    .line {
+      white-space: pre-wrap;
+    }
 
-  .fade-delay-1 { animation-delay: 0.3s; }
-  .fade-delay-2 { animation-delay: 0.6s; }
-  .fade-delay-3 { animation-delay: 0.9s; }
-  .fade-delay-4 { animation-delay: 1.2s; }
-  .fade-delay-5 { animation-delay: 1.5s; }
-  .fade-delay-6 { animation-delay: 1.8s; }
-
-  body {
-    background-color: #0d0d0d;
-    color: #eee;
-    font-family: 'Courier New', monospace;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-    padding: 20px;
-  }
-  h1 {
-    margin-bottom: 20px;
-  }
-  button, input[type="text"] {
-    font-family: 'Courier New', monospace;
-    font-size: 18px;
-    padding: 10px 20px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 4px;
-  }
-  button {
-    background-color: #222;
-    color: #eee;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    user-select: none;
-  }
-  button:hover {
-    background-color: #444;
-  }
-  input[type="text"] {
-    width: 300px;
-    color: #222;
-    border: 1px solid #555;
-  }
-  #result {
-    margin-top: 15px;
-    font-weight: bold;
-    min-height: 24px;
-    color: #44ff44;
-    font-size: 18px;
-    transition: opacity 0.5s ease;
-  }
-  .back-button {
+    .back-button {
       position: fixed;
       top: 20px;
       left: 20px;
@@ -85,55 +43,52 @@
       border: 1px solid #444;
       cursor: pointer;
       user-select: none;
-  }
-</style>
+    }
+  </style>
 </head>
 <body>
-  <button class="back-button fade-in fade-delay-1" onclick="window.location.href='index.html'">← Back</button>
-  <h1 class="fade-in fade-delay-2">Puzzle 7</h1>
+  <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
   <!-- the -->
+  <div class="terminal" id="terminal"></div>
 
-  <button id="playBtn" class="fade-in fade-delay-3">Play</button>
-  <audio id="audio" src="audio/puzzle7.mp3"></audio>
+  <script>
+    const terminal = document.getElementById('terminal');
 
-  <input type="text" id="answerInput" placeholder="Enter your answer" autocomplete="off" class="fade-in fade-delay-4" />
+    const lines = [
+      ">> Initiating memory sequence: 207-3-26",
+      "...",
+      "[LOADED] fragment_01: D_D",
+      "[LOADED] fragment_02: YOU",
+      "[LOADED] fragment_03: F_RGET",
+      "[WARNING] Sector 4 corrupted – symbol degraded: 'O'",
+      "",
+      "/// SYSTEM TRACE ///",
+      "Query: Did you...",
+      "Response: █████ you ███get.",
+      "",
+      "Note: Memory reconstruction incomplete.",
+      "Cross-reference missing bit: [shape: round]",
+      "",
+      ">> Standby for manual input."
+    ];
 
-  <button onclick="checkAnswer()" class="fade-in fade-delay-5">Submit</button>
+    let index = 0;
 
-  <div id="result" class="fade-in fade-delay-6"></div>
-
-<script>
-  const audio = document.getElementById('audio');
-  const playBtn = document.getElementById('playBtn');
-
-  playBtn.addEventListener('click', () => {
-    audio.play();
-  });
-
-  const correctAnswer = "hello hi".toLowerCase();
-
-  function checkAnswer() {
-    const input = document.getElementById('answerInput').value.trim().toLowerCase();
-    const message = document.getElementById('result');
-    if(input === correctAnswer) {
-      localStorage.setItem("puzzle7", "solved");
-      message.style.color = "#44ff44";
-      message.innerText = "207 3 26";
-    } else {
-      message.style.color = "#ff4444";
-      message.innerText = "Try again.";
+    function printNextLine() {
+      if (index < lines.length) {
+        const line = document.createElement('div');
+        line.className = 'line';
+        line.textContent = lines[index];
+        terminal.appendChild(line);
+        terminal.scrollTop = terminal.scrollHeight;
+        index++;
+        setTimeout(printNextLine, 1000);
+      }
     }
-  }
 
-  window.onload = () => {
-    if(localStorage.getItem("puzzle7") === "solved") {
-      const message = document.getElementById('result');
-      message.style.color = "#44ff44";
-      message.innerText = "207 3 26";
-      document.getElementById('answerInput').value = correctAnswer;
-    }
-  };
-</script>
+    window.onload = () => {
+      printNextLine();
+    };
+  </script>
 </body>
 </html>
-

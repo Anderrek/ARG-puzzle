@@ -5,14 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Puzzle 7</title>
   <style>
-    @keyframes typing {
-      0% { width: 0 }
-      100% { width: 100% }
-    }
-
-    @keyframes blinkCaret {
-      0%, 100% { border-color: transparent }
-      50% { border-color: #00ff88 }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
     }
 
     body {
@@ -44,7 +39,6 @@
       font-family: 'Courier New', monospace;
       white-space: pre-wrap;
       margin-bottom: 4px;
-      border: none;
     }
 
     .cursor {
@@ -53,20 +47,6 @@
       color: #00ff88;
       animation: blink 1s steps(2, start) infinite;
       user-select: none;
-    }
-
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0; }
-    }
-
-
-    .line.finished {
-      border-right: none;
-      animation: none;
-      white-space: pre-wrap;
-      overflow: visible;
-      width: 100% !important;
     }
 
     .input-line {
@@ -110,7 +90,6 @@
   <script>
     const terminal = document.getElementById('terminal');
 
-    // Pierwotne linie tekstu
     const introLines = [
       "SYSTEM INIT SEQUENCE 0x7A9F3B",
       "MEMORY FRAGMENTS ONLINE...",
@@ -127,39 +106,55 @@
     ];
 
     let awaitingInput = false;
+    let revealedLetters = "";
+    let PASSCODE = "";
 
-    function typeLine(text, delay = 100) {
-  return new Promise((resolve) => {
-    const line = document.createElement('div');
-    line.className = 'line';
-    terminal.appendChild(line);
-    terminal.scrollTop = terminal.scrollHeight;
-
-    const cursor = document.createElement('span');
-    cursor.className = 'cursor';
-    cursor.textContent = '_';
-    line.appendChild(cursor);
-
-    let i = 0;
-    function typeChar() {
-      if (i < text.length) {
-        // przed kursorem dopisujemy kolejną literę
-        cursor.insertAdjacentText('beforebegin', text[i]);
-        i++;
-        terminal.scrollTop = terminal.scrollHeight;
-        setTimeout(typeChar, delay);
-      } else {
-        // zakończ animację migania kursora (usuń kursor)
-        cursor.remove();
-        resolve();
+    async function loadPasscode() {
+      try {
+        const response = await fetch('answers.txt');
+        if (!response.ok) throw new Error('Fetch failed');
+        const text = await response.text();
+        const lines = text.split(/\r?\n/);
+        PASSCODE = lines[6]?.trim();
+      } catch (err) {
+        console.error("Couldn't load passcode. Using fallback.");
       }
     }
-    typeChar();
-  });
-}
 
+    async function typeLine(text, delay = 100) {
+      return new Promise((resolve) => {
+        const line = document.createElement('div');
+        line.className = 'line';
+        terminal.appendChild(line);
+        terminal.scrollTop = terminal.scrollHeight;
 
-    // Dodaje linię z inputem do terminala, bez animacji fade-in
+        const cursor = document.createElement('span');
+        cursor.className = 'cursor';
+        cursor.textContent = '_';
+        line.appendChild(cursor);
+
+        let i = 0;
+        function typeChar() {
+          if (i < text.length) {
+            cursor.insertAdjacentText('beforebegin', text[i]);
+            i++;
+            terminal.scrollTop = terminal.scrollHeight;
+            setTimeout(typeChar, delay);
+          } else {
+            cursor.remove();
+            resolve();
+          }
+        }
+        typeChar();
+      });
+    }
+
+    async function typeMultiLine(lines) {
+      for (let i = 0; i < lines.length; i++) {
+        await typeLine(lines[i]);
+      }
+    }
+
     function addInputField() {
       const inputLine = document.createElement('div');
       inputLine.className = 'input-line';
@@ -178,7 +173,7 @@
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !awaitingInput) {
           const val = input.value.trim();
-          if(val.length === 0) return; // pusty input ignorujemy
+          if (val.length === 0) return;
           awaitingInput = true;
           input.disabled = true;
           processCommand(val);
@@ -192,18 +187,26 @@
       input.focus();
     }
 
-    // Funkcja wyświetlająca wiele linii animowanych kolejno (asynchronicznie)
     async function printIntroLines() {
-      for(let i = 0; i < introLines.length; i++){
+      for (let i = 0; i < introLines.length; i++) {
         await typeLine(introLines[i]);
       }
       addInputField();
     }
 
+    async function revealNextLetters(count = 2) {
+      const start = revealedLetters.length;
+      const next = PASSCODE.slice(start, start + count);
+      revealedLetters += next;
+      if (next) {
+        await typeLine(`[PASSCODE FRAGMENT] ${revealedLetters}`);
+      }
+    }
+
     async function processCommand(cmdRaw) {
       const cmd = cmdRaw.toUpperCase();
 
-      switch(cmd) {
+      switch (cmd) {
         case "HELP":
           await typeMultiLine([
             "Available commands:",
@@ -225,6 +228,7 @@
             " - System uptime: 3h 12m",
             " - Last reset: 207-03-26"
           ]);
+          await revealNextLetters();
           break;
 
         case "DUMP":
@@ -235,6 +239,7 @@
             " E4A: 0x9A 0xBB 0x1E 0x44 0x77",
             " F12: 0x6F 0xA3 0xC9 0x10 0x22"
           ]);
+          await revealNextLetters();
           break;
 
         case "TRACE":
@@ -245,6 +250,7 @@
             " Malware signature detected in sector 4.",
             " Trace vector rerouted through node 9."
           ]);
+          await revealNextLetters();
           break;
 
         case "RECONSTRUCT":
@@ -253,22 +259,21 @@
             " Analyzing fragments...",
             " Data missing at segment 4.",
             " Possible keyword pattern detected.",
-            " [ACCESS CODE FRAGMENTS: 207 3 26]",
+            ` [ACCESS CODE FRAGMENTS: ${revealedLetters || "INCOMPLETE"}]`,
             " Enter passphrase to unlock."
           ]);
+          await revealNextLetters();
           break;
 
         case "RESET":
           terminal.innerHTML = '';
+          revealedLetters = '';
           awaitingInput = false;
           printIntroLines();
-          return;  // przerwij dalej
+          return;
 
         default:
-          // Tu podstawowa zagadka - hasło
-          if(cmd === "UNLOCK" || cmd === "ACCESS" || cmd === "OPEN") {
-            await typeLine("ACCESS DENIED: Passphrase required.");
-          } else if (cmdRaw.toLowerCase() === 'didyufrget') {
+          if (cmdRaw.toLowerCase() === PASSCODE.toLowerCase()) {
             localStorage.setItem("puzzle7", "solved");
             await typeLine("ACCESS GRANTED – Code: 207 3 26", 0);
           } else {
@@ -281,15 +286,13 @@
       addInputField();
     }
 
-    // Pomocnicza funkcja do wyświetlania wielu linii po kolei (animacja)
-    async function typeMultiLine(lines) {
-      for (let i=0; i<lines.length; i++) {
-        await typeLine(lines[i]);
-      }
+    async function startTerminal() {
+      await loadPasscode();
+      await printIntroLines();
     }
 
     window.onload = () => {
-      printIntroLines();
+      startTerminal();
     };
   </script>
 </body>

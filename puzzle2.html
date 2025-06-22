@@ -178,14 +178,14 @@
       const response = await fetch("answers.txt");
       const text = await response.text();
       const lines = text.trim().split("\n");
-      correctAnswer = lines[1].trim().toLowerCase();
+      correctAnswer = lines[1].trim().toUpperCase();
     } catch (error) {
       console.error("Failed to load answer:", error);
     }
   }
 
   async function checkAnswer() {
-    const input = document.getElementById("answer").value.trim().toLowerCase();
+    const input = document.getElementById("answer").value.trim().toUpperCase();
     const message = document.getElementById("message");
 
     if (!correctAnswer) {

@@ -99,29 +99,25 @@
       "[LOG] Partial memory dump follows:",
       "  > Segment A1F: 0xD4 0xE5 0xB9 0x47 0x99",
       "  > Segment C2D: 0x55 0xFC 0x3B 0x6A 0x1D",
+      "  > Segment E4A: 0x9A 0xBB 0x1E 0x44 0x77",
+      "  > Segment F12: 0x6F 0xA3 0xC9 0x10 0x22",
       "[SYSTEM] Reconstruction protocols active.",
       "",
       "TYPE 'HELP' FOR A LIST OF COMMANDS.",
       ""
     ];
 
+    const segmentDetails = {
+      A1F: ["Segment A1F Details:", "Encrypted key: 4B-6A-3D", "Status: OK"],
+      C2D: ["Segment C2D Details:", "Checksum mismatch detected", "Recovery: Not possible"],
+      E4A: ["Segment E4A Details:", "Pattern: ██ ██ █ ██", "Anomaly detected"],
+      F12: ["Segment F12 Details:", "Contains trace logs", "Priority: HIGH"]
+    };
+
     let awaitingInput = false;
-    let revealedLetters = "";
-    let PASSCODE = "";
+    let segmentDumped = false;
 
-    async function loadPasscode() {
-      try {
-        const response = await fetch('answers.txt');
-        if (!response.ok) throw new Error('Fetch failed');
-        const text = await response.text();
-        const lines = text.split(/\r?\n/);
-        PASSCODE = lines[6]?.trim();
-      } catch (err) {
-        console.error("Couldn't load passcode. Using fallback.");
-      }
-    }
-
-    async function typeLine(text, delay = 50) {
+    function typeLine(text, delay = 30) {
       return new Promise((resolve) => {
         const line = document.createElement('div');
         line.className = 'line';
@@ -149,12 +145,6 @@
       });
     }
 
-    async function typeMultiLine(lines) {
-      for (let i = 0; i < lines.length; i++) {
-        await typeLine(lines[i]);
-      }
-    }
-
     function addInputField() {
       const inputLine = document.createElement('div');
       inputLine.className = 'input-line';
@@ -173,7 +163,7 @@
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !awaitingInput) {
           const val = input.value.trim();
-          if (val.length === 0) return;
+          if(val.length === 0) return;
           awaitingInput = true;
           input.disabled = true;
           processCommand(val);
@@ -188,25 +178,22 @@
     }
 
     async function printIntroLines() {
-      for (let i = 0; i < introLines.length; i++) {
-        await typeLine(introLines[i]);
+      for (let line of introLines) {
+        await typeLine(line);
       }
       addInputField();
     }
 
-    async function revealNextLetters(count = 2) {
-      const start = revealedLetters.length;
-      const next = PASSCODE.slice(start, start + count);
-      revealedLetters += next;
-      if (next) {
-        await typeLine(`[PASSCODE FRAGMENT] ${revealedLetters}`);
+    async function typeMultiLine(lines) {
+      for (let line of lines) {
+        await typeLine(line);
       }
     }
 
     async function processCommand(cmdRaw) {
       const cmd = cmdRaw.toUpperCase();
 
-      switch (cmd) {
+      switch(cmd) {
         case "HELP":
           await typeMultiLine([
             "Available commands:",
@@ -228,18 +215,18 @@
             " - System uptime: 3h 12m",
             " - Last reset: 207-03-26"
           ]);
-          await revealNextLetters();
           break;
 
         case "DUMP":
           await typeMultiLine([
             "MEMORY DUMP SEGMENTS:",
-            " A1F: 0xD4 0xE5 0xB9 0x47 0x99",
-            " C2D: 0x55 0xFC 0x3B 0x6A 0x1D",
-            " E4A: 0x9A 0xBB 0x1E 0x44 0x77",
-            " F12: 0x6F 0xA3 0xC9 0x10 0x22"
+            " A1F",
+            " C2D",
+            " E4A",
+            " F12",
+            "Type a segment code (e.g. A1F) to inspect its content."
           ]);
-          await revealNextLetters();
+          segmentDumped = true;
           break;
 
         case "TRACE":
@@ -250,7 +237,6 @@
             " Malware signature detected in sector 4.",
             " Trace vector rerouted through node 9."
           ]);
-          await revealNextLetters();
           break;
 
         case "RECONSTRUCT":
@@ -259,21 +245,22 @@
             " Analyzing fragments...",
             " Data missing at segment 4.",
             " Possible keyword pattern detected.",
-            ` [ACCESS CODE FRAGMENTS: ${revealedLetters || "INCOMPLETE"}]`,
+            " [ACCESS CODE FRAGMENTS: 207 3 26]",
             " Enter passphrase to unlock."
           ]);
-          await revealNextLetters();
           break;
 
         case "RESET":
           terminal.innerHTML = '';
-          revealedLetters = '';
           awaitingInput = false;
+          segmentDumped = false;
           printIntroLines();
           return;
 
         default:
-          if (cmdRaw.toLowerCase() === PASSCODE.toLowerCase()) {
+          if (segmentDumped && segmentDetails[cmd]) {
+            await typeMultiLine(segmentDetails[cmd]);
+          } else if (cmdRaw.toLowerCase() === 'didyufrget') {
             localStorage.setItem("puzzle7", "solved");
             await typeLine("ACCESS GRANTED – Code: 207 3 26", 0);
           } else {
@@ -286,13 +273,8 @@
       addInputField();
     }
 
-    async function startTerminal() {
-      await loadPasscode();
-      await printIntroLines();
-    }
-
     window.onload = () => {
-      startTerminal();
+      printIntroLines();
     };
   </script>
 </body>

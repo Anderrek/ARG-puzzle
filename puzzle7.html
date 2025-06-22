@@ -331,6 +331,16 @@ let correctAnswer = "";
             ]);
             break;
 
+            case "SECRET":
+              const img = document.createElement('img');
+              img.src = 'secret.png';
+              img.alt = 'Secret Image';
+              img.style.maxWidth = '100%';
+              img.style.marginTop = '10px';
+              terminal.appendChild(img);
+            break;
+  
+
           case "TRACE":
             await typeMultiLine([
               "TRACE LOG:",

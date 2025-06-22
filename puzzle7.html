@@ -47,6 +47,12 @@
       border: none;
     }
 
+    .fade-delay-1 { animation-delay: 0.3s; }
+    .fade-delay-2 { animation-delay: 0.6s; }
+    .fade-delay-3 { animation-delay: 0.9s; }
+    .fade-delay-4 { animation-delay: 1.2s; }
+    .fade-delay-5 { animation-delay: 1.5s; }
+
     .cursor {
       display: inline-block;
       width: 10px;
@@ -72,6 +78,10 @@
       display: flex;
       align-items: center;
       margin-top: 10px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
     }
 
     .prompt {
@@ -118,9 +128,10 @@
   </style>
 </head>
 <body>
-  <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
-  <div class="terminal" id="terminal"></div>
-  <div id="result"></div>
+  <button class="back-button fade-in fade-delay-1" onclick="window.location.href='index.html'">← Back</button>
+  <h1 class="fade-in fade-delay-2">Puzzle 1</h1>
+  <div class="terminal fade-in fade-delay-3" id="terminal"></div>
+  <div id="result fade-in fade-delay-4"></div>
 
   <script>
 

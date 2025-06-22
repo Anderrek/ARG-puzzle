@@ -177,8 +177,12 @@
   .then(response => response.text())
   .then(text => {
     const lines = text.split('\n');
+    const line9 = lines[8]?.trim();
     const line10 = lines[9]?.trim(); 
     const line11 = lines[10]?.trim();
+    if (line9) {
+      correctCode = line9.split(/\s+/);
+    }
     if (line10) {
       secretCode = line10.split(/\s+/);
     }
@@ -216,11 +220,10 @@
   }
 
   function checkSequence() {
-  if (codeSequence.join('') === codeSequence.join('')) {
+  if (codeSequence.join('') === secretCode.join('')) {
     result.style.color = "#44bbff";
     result.style.fontWeight = "bold";
     result.innerText = secretResponse;
-    localStorage.setItem("puzzle9", "solved");
   } else if (codeSequence.join('') === correctCode.join('')) {
     result.style.color = "#44ff44";
     result.style.fontWeight = "bold";

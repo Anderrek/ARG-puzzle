@@ -298,11 +298,12 @@ let correctAnswer = "";
               "HELP        - Show this help text",
               "STATUS      - Show current system status",
               "DUMP        - Dump memory fragments",
-              "TRACE       - Show recent trace logs or TRACE <segment>",
+              "TRACE       - Show recent trace logs or segment",
               "RECONSTRUCT - Attempt data reconstruction",
               "RESET       - Restart session",
-              "SCAN        - Scan a segment for anomalies (e.g. SCAN E4A)",
-              "RECOVER     - Attempt recovery on segment (e.g. RECOVER C2D)"
+              "SCAN        - Scan a segment for anomalies",
+              "RECOVER     - Attempt recovery on segment",
+              "<SEGMENT>   - Attempt to see encrypted key"
             ]);
             break;
 
@@ -358,7 +359,6 @@ let correctAnswer = "";
             return;
 
           default:
-            // Komendy z parametrem, np. SCAN E4A, TRACE F12, RECOVER C2D, lub podanie segmentu
             let parts = cmd.split(" ");
             if(parts.length === 2){
               let mainCmd = parts[0];
@@ -413,7 +413,7 @@ let correctAnswer = "";
             }
 
             const segments = {
-              "A1F": "Segment A1F data: Encrypted key hex: 44 49 44 (ASCII for 'DID')",
+              "A1F": "Segment A1F data: Encrypted key16: 44 49 44",
               "C2D": "Segment C2D data: Corrupted, recovery not possible.",
               "E4A": "Segment E4A data: Anomaly detected in data stream.",
               "F12": "Segment F12 data: High priority flagged segment."

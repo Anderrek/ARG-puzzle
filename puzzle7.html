@@ -100,6 +100,13 @@
       cursor: pointer;
       z-index: 100;
     }
+
+    .green {
+      color: #00ff88;
+    }
+    .red {
+      color: #ff4444;
+    }
   </style>
 </head>
 <body>
@@ -109,7 +116,9 @@
   <script>
     const terminal = document.getElementById('terminal');
 
-    // Pierwotne linie tekstu
+    // PASSCODE pobrany z pliku answers.txt, linijka 7 (na sztywno tu wpisany dla demo)
+    const PASSCODE = "didu"; // np. "didu" (dopasuj do rzeczywistego hasła, wszystko uppercase)
+
     const introLines = [
       "SYSTEM INIT SEQUENCE 0x7A9F3B",
       "MEMORY FRAGMENTS ONLINE...",
@@ -117,10 +126,8 @@
       "[INFO] Data integrity: 87%",
       "[WARNING] Sector 4: Missing data segment.",
       "[LOG] Partial memory dump follows:",
-      " A1F: 0x44 0x49 0x44 0xE5 0xB9",
-      " C2D: 0x55 0xFC 0x3B 0x6A 0x1D",
-      " E4A: 0x9A 0xBB 0x1E 0x44 0x77",
-      " F12: 0x6F 0xA3 0xC9 0x10 0x22",
+      "  > Segment A1F: 0x44 0x49 0x44 0xE5 0xB9",
+      "  > Segment C2D: 0x55 0xFC 0x3B 0x6A 0x1D",
       "[SYSTEM] Reconstruction protocols active.",
       "",
       "TYPE 'HELP' FOR A LIST OF COMMANDS.",
@@ -128,11 +135,14 @@
     ];
 
     let awaitingInput = false;
+    let waitingForPassphrase = false;
+    let solved = false;
 
-    function typeLine(text, delay = 50) {
+    function typeLine(text, delay = 50, className = '') {
       return new Promise((resolve) => {
         const line = document.createElement('div');
         line.className = 'line';
+        if(className) line.classList.add(className);
         terminal.appendChild(line);
         terminal.scrollTop = terminal.scrollHeight;
 
@@ -196,151 +206,178 @@
       addInputField();
     }
 
-    async function typeMultiLine(lines) {
-      for (let i=0; i<lines.length; i++) {
-        await typeLine(lines[i]);
-      }
-    }
-
     async function processCommand(cmdRaw) {
       const cmd = cmdRaw.toUpperCase();
 
-      switch(cmd) {
-        case "HELP":
-          await typeMultiLine([
-            "Available commands:",
-            "HELP        - Show this help text",
-            "STATUS      - Show current system status",
-            "DUMP        - Dump memory fragments",
-            "TRACE       - Show recent trace logs or TRACE <segment>",
-            "RECONSTRUCT - Attempt data reconstruction",
-            "RESET       - Restart session",
-            "SCAN        - Scan a segment",
-            "RECOVER     - Attempt recovery on segment"
-          ]);
-          break;
-
-        case "STATUS":
-          await typeMultiLine([
-            "SYSTEM STATUS:",
-            " - Memory integrity: 87%",
-            " - Active protocols: RECONSTRUCT, TRACE",
-            " - Intrusion attempts: 4 detected",
-            " - System uptime: 3h 12m",
-            " - Last reset: 19-12-25"
-          ]);
-          break;
-
-        case "DUMP":
-          await typeMultiLine([
-            "MEMORY DUMP SEGMENTS:",
-            " A1F: 0x44 0x49 0x44 0xE5 0xB9",
-            " C2D: 0x55 0xFC 0x3B 0x6A 0x1D (recovery not possible)",
-            " E4A: 0x9A 0xBB 0x1E 0x44 0x77 (anomaly detected)",
-            " F12: 0x6F 0xA3 0xC9 0x10 0x22 (high priority)"
-          ]);
-          break;
-
-        case "TRACE":
-          await typeMultiLine([
-            "TRACE LOG:",
-            " Intrusion attempt from IP 192.168.7.32 blocked.",
-            " Multiple failed auth from 10.4.15.26.",
-            " Malware signature detected in sector 4.",
-            " Trace vector rerouted through node 9."
-          ]);
-          break;
-
-        case "RECONSTRUCT":
-          await typeMultiLine([
-            "RECONSTRUCTION INITIATED...",
-            " Analyzing fragments...",
-            " Data missing at segment 4.",
-            " Possible keyword pattern detected.",
-            " [ACCESS CODE FRAGMENTS: A1F C2D E4A F12]",
-            " Enter passphrase to unlock."
-          ]);
-          break;
-
-        case "RESET":
-          terminal.innerHTML = '';
+      if(waitingForPassphrase){
+        // Sprawdzamy hasło
+        if(cmdRaw.toLowerCase() === PASSCODE.toLowerCase()){
+          // poprawne
+          await typeLine("207 3 26", 40, "green");
+          solved = true;
+          waitingForPassphrase = false;
+          // Po rozwiązaniu nie powtarzamy logu, tylko wyświetlamy kod
+        } else {
+          await typeLine("Try again.", 40, "red");
+          // nadal czekamy na hasło, więc nie resetujemy awaitingInput
           awaitingInput = false;
-          printIntroLines();
+          addInputField();
           return;
+        }
+      } else {
+        if(solved){
+          // Po rozwiązaniu zagadki - przy wpisaniu czegokolwiek pokazujemy tylko kod
+          await typeLine("207 3 26", 40, "green");
+          awaitingInput = false;
+          addInputField();
+          return;
+        }
 
-        default:
-          // Komendy z parametrem, np. SCAN E4A, TRACE F12, RECOVER C2D, lub podanie segmentu
-          let parts = cmd.split(" ");
-          if(parts.length === 2){
-            let mainCmd = parts[0];
-            let param = parts[1];
+        switch(cmd) {
+          case "HELP":
+            await typeMultiLine([
+              "Available commands:",
+              "HELP        - Show this help text",
+              "STATUS      - Show current system status",
+              "DUMP        - Dump memory fragments",
+              "TRACE       - Show recent trace logs or TRACE <segment>",
+              "RECONSTRUCT - Attempt data reconstruction",
+              "RESET       - Restart session",
+              "SCAN        - Scan a segment for anomalies (e.g. SCAN E4A)",
+              "RECOVER     - Attempt recovery on segment (e.g. RECOVER C2D)"
+            ]);
+            break;
 
-            if(mainCmd === "SCAN"){
-              if(param === "E4A"){
-                await typeMultiLine([
-                  "SCAN INITIATED ON SEGMENT E4A...",
-                  "Analyzing...",
-                  "Signal noise: ██F█R█G██",
-                  "Reconstruction failed. Suggest: manual extraction."
-                ]);
-              } else {
-                await typeLine(`Scan on segment ${param} shows no anomalies or is unsupported.`);
+          case "STATUS":
+            await typeMultiLine([
+              "SYSTEM STATUS:",
+              " - Memory integrity: 87%",
+              " - Active protocols: RECONSTRUCT, TRACE",
+              " - Intrusion attempts: 4 detected",
+              " - System uptime: 3h 12m",
+              " - Last reset: 207-03-26"
+            ]);
+            break;
+
+          case "DUMP":
+            await typeMultiLine([
+              "MEMORY DUMP SEGMENTS:",
+              " A1F: 0x44 0x49 0x44 0xE5 0xB9",
+              " C2D: 0x55 0xFC 0x3B 0x6A 0x1D (recovery not possible)",
+              " E4A: 0x9A 0xBB 0x1E 0x44 0x77 (anomaly detected)",
+              " F12: 0x6F 0xA3 0xC9 0x10 0x22 (high priority)"
+            ]);
+            break;
+
+          case "TRACE":
+            await typeMultiLine([
+              "TRACE LOG:",
+              " Intrusion attempt from IP 192.168.7.32 blocked.",
+              " Multiple failed auth from 10.4.15.26.",
+              " Malware signature detected in sector 4.",
+              " Trace vector rerouted through node 9."
+            ]);
+            break;
+
+          case "RECONSTRUCT":
+            await typeMultiLine([
+              "RECONSTRUCTION INITIATED...",
+              " Analyzing fragments...",
+              " Data missing at segment 4.",
+              " Possible keyword pattern detected.",
+              " [ACCESS CODE FRAGMENTS: 207 3 26]",
+              " Enter passphrase to unlock."
+            ]);
+            waitingForPassphrase = true;
+            break;
+
+          case "RESET":
+            terminal.innerHTML = '';
+            awaitingInput = false;
+            waitingForPassphrase = false;
+            solved = false;
+            printIntroLines();
+            return;
+
+          default:
+            // Komendy z parametrem, np. SCAN E4A, TRACE F12, RECOVER C2D, lub podanie segmentu
+            let parts = cmd.split(" ");
+            if(parts.length === 2){
+              let mainCmd = parts[0];
+              let param = parts[1];
+
+              if(mainCmd === "SCAN"){
+                if(param === "E4A"){
+                  await typeMultiLine([
+                    "SCAN INITIATED ON SEGMENT E4A...",
+                    "Analyzing...",
+                    "Signal noise: ██F█R█G██",
+                    "Reconstruction failed. Suggest: manual extraction."
+                  ]);
+                } else {
+                  await typeLine(`Scan on segment ${param} shows no anomalies or is unsupported.`);
+                }
+                awaitingInput = false;
+                addInputField();
+                return;
               }
-              awaitingInput = false;
-              addInputField();
-              return;
+
+              if(mainCmd === "TRACE"){
+                if(param === "F12"){
+                  await typeMultiLine([
+                    "TRACE LOG F12:",
+                    "[LOG 12:07] E: Elevation threshold exceeded",
+                    "[LOG 12:08] T: Trace vector rerouted",
+                    "Priority logs archived."
+                  ]);
+                } else {
+                  await typeLine(`No trace data available for segment ${param}.`);
+                }
+                awaitingInput = false;
+                addInputField();
+                return;
+              }
+
+              if(mainCmd === "RECOVER"){
+                if(param === "C2D"){
+                  await typeMultiLine([
+                    "Attempting sector recovery C2D...",
+                    "-- Fragment dump: ...Y..U..0x2A..corrupted --",
+                    "Recovery failed."
+                  ]);
+                } else {
+                  await typeLine(`Recovery not applicable or not supported for segment ${param}.`);
+                }
+                awaitingInput = false;
+                addInputField();
+                return;
+              }
             }
 
-            if(mainCmd === "TRACE"){
-              if(param === "F12"){
-                await typeMultiLine([
-                  "TRACE LOG F12:",
-                  "[LOG 12:07] E: Elevation threshold exceeded",
-                  "[LOG 12:08] T: Trace vector rerouted",
-                  "Priority logs archived."
-                ]);
-              } else {
-                await typeLine(`No trace data available for segment ${param}.`);
-              }
-              awaitingInput = false;
-              addInputField();
-              return;
+            const segments = {
+              "A1F": "Segment A1F data: Encrypted key hex: 44 49 44 (ASCII for 'DID')",
+              "C2D": "Segment C2D data: Corrupted, recovery not possible.",
+              "E4A": "Segment E4A data: Anomaly detected in data stream.",
+              "F12": "Segment F12 data: High priority flagged segment."
+            };
+
+            if(segments[cmd]){
+              await typeLine(segments[cmd]);
+            } else {
+              await typeLine("Unknown command or segment. Type HELP for commands.");
             }
-
-            if(mainCmd === "RECOVER"){
-              if(param === "C2D"){
-                await typeMultiLine([
-                  "Attempting sector recovery C2D...",
-                  "-- Fragment dump: ...Y..U..0x2A..corrupted --",
-                  "Recovery failed."
-                ]);
-              } else {
-                await typeLine(`Recovery not applicable or not supported for segment ${param}.`);
-              }
-              awaitingInput = false;
-              addInputField();
-              return;
-            }
-          }
-
-          // Jeśli wpisano sam segment, wyświetl jego zawartość (np. A1F)
-          const segments = {
-            "A1F": "Segment A1F data: Encrypted key hex: 44 49 44 (ASCII for 'DID')",
-            "C2D": "Segment C2D data: Corrupted, recovery not possible.",
-            "E4A": "Segment E4A data: Anomaly detected in data stream.",
-            "F12": "Segment F12 data: High priority flagged segment."
-          };
-
-          if(segments[cmd]){
-            await typeLine(segments[cmd]);
-          } else {
-            await typeLine("Unknown command or segment. Type HELP for commands.");
-          }
-          break;
+            break;
+        }
       }
 
       awaitingInput = false;
       addInputField();
+    }
+
+    async function typeMultiLine(lines) {
+      for (let i=0; i<lines.length; i++) {
+        await typeLine(lines[i]);
+      }
     }
 
     printIntroLines();

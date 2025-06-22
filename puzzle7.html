@@ -117,8 +117,10 @@
       "[INFO] Data integrity: 87%",
       "[WARNING] Sector 4: Missing data segment.",
       "[LOG] Partial memory dump follows:",
-      "  > Segment A1F: 0xD4 0xE5 0xB9 0x47 0x99",
-      "  > Segment C2D: 0x55 0xFC 0x3B 0x6A 0x1D",
+      " A1F: 0x44 0x49 0x44 0xE5 0xB9",
+      " C2D: 0x55 0xFC 0x3B 0x6A 0x1D",
+      " E4A: 0x9A 0xBB 0x1E 0x44 0x77",
+      " F12: 0x6F 0xA3 0xC9 0x10 0x22",
       "[SYSTEM] Reconstruction protocols active.",
       "",
       "TYPE 'HELP' FOR A LIST OF COMMANDS.",
@@ -232,7 +234,7 @@
         case "DUMP":
           await typeMultiLine([
             "MEMORY DUMP SEGMENTS:",
-            " A1F: 0x44 0x49 0x44 0xE5 0xB9 0x47 0x99",
+            " A1F: 0x44 0x49 0x44 0xE5 0xB9",
             " C2D: 0x55 0xFC 0x3B 0x6A 0x1D (recovery not possible)",
             " E4A: 0x9A 0xBB 0x1E 0x44 0x77 (anomaly detected)",
             " F12: 0x6F 0xA3 0xC9 0x10 0x22 (high priority)"
@@ -255,7 +257,7 @@
             " Analyzing fragments...",
             " Data missing at segment 4.",
             " Possible keyword pattern detected.",
-            " [ACCESS CODE FRAGMENTS: SEGMENTATION FAULT]",
+            " [ACCESS CODE FRAGMENTS: A1F C2D E4A F12]",
             " Enter passphrase to unlock."
           ]);
           break;

@@ -1,1 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Puzzle 7</title>
+<style>
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    opacity: 0;
+    animation: fadeInUp 1s ease forwards;
+  }
+
+  .fade-delay-1 { animation-delay: 0.3s; }
+  .fade-delay-2 { animation-delay: 0.6s; }
+  .fade-delay-3 { animation-delay: 0.9s; }
+  .fade-delay-4 { animation-delay: 1.2s; }
+  .fade-delay-5 { animation-delay: 1.5s; }
+  .fade-delay-6 { animation-delay: 1.8s; }
+
+  body {
+    background-color: #0d0d0d;
+    color: #eee;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+  button, input[type="text"] {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 4px;
+  }
+  button {
+    background-color: #222;
+    color: #eee;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button:hover {
+    background-color: #444;
+  }
+  input[type="text"] {
+    width: 300px;
+    color: #222;
+    border: 1px solid #555;
+  }
+  #result {
+    margin-top: 15px;
+    font-weight: bold;
+    min-height: 24px;
+    color: #44ff44;
+    font-size: 18px;
+    transition: opacity 0.5s ease;
+  }
+  .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 16px;
+      font-size: 14px;
+      background-color: #111;
+      color: #ccc;
+      border: 1px solid #444;
+      cursor: pointer;
+      user-select: none;
+  }
+</style>
+</head>
+<body>
+  <button class="back-button fade-in fade-delay-1" onclick="window.location.href='index.html'">← Back</button>
+  <h1 class="fade-in fade-delay-2">Puzzle 7</h1>
+  <!-- the -->
+
+  <button id="playBtn" class="fade-in fade-delay-3">Play</button>
+  <audio id="audio" src="audio/puzzle7.mp3"></audio>
+
+  <input type="text" id="answerInput" placeholder="Enter your answer" autocomplete="off" class="fade-in fade-delay-4" />
+
+  <button onclick="checkAnswer()" class="fade-in fade-delay-5">Submit</button>
+
+  <div id="result" class="fade-in fade-delay-6"></div>
+
+<script>
+  const audio = document.getElementById('audio');
+  const playBtn = document.getElementById('playBtn');
+
+  playBtn.addEventListener('click', () => {
+    audio.play();
+  });
+
+  const correctAnswer = "hello hi".toLowerCase();
+
+  function checkAnswer() {
+    const input = document.getElementById('answerInput').value.trim().toLowerCase();
+    const message = document.getElementById('result');
+    if(input === correctAnswer) {
+      localStorage.setItem("puzzle7", "solved");
+      message.style.color = "#44ff44";
+      message.innerText = "207 3 26";
+    } else {
+      message.style.color = "#ff4444";
+      message.innerText = "Try again.";
+    }
+  }
+
+  window.onload = () => {
+    if(localStorage.getItem("puzzle7") === "solved") {
+      const message = document.getElementById('result');
+      message.style.color = "#44ff44";
+      message.innerText = "207 3 26";
+      document.getElementById('answerInput').value = correctAnswer;
+    }
+  };
+</script>
+</body>
+</html>
 

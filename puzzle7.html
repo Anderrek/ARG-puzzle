@@ -264,6 +264,9 @@ let correctAnswer = "";
           await typeLine("ACCESS GRANTED.", 40, "green");
           solved = true;
           waitingForPassphrase = false;
+          message.style.color = "#44ff44";
+          message.innerText = "207 3 26";
+          localStorage.setItem("puzzle7", "solved");
          
         } else {
           await typeLine("PASSCODE INCORRECT.", 40, "red");

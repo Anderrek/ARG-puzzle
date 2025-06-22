@@ -92,91 +92,113 @@
   <!-- the -->
   <div class="terminal fade-in fade-delay-2" id="terminal"></div>
 
-  <script>
-    const terminal = document.getElementById('terminal');
+  <!-- Zmiana tylko w JS + lekka modyfikacja CSS -->
+<script>
+  const terminal = document.getElementById('terminal');
 
-    const lines = [
-      ">> Initiating memory sequence: 207-3-26",
-      "...",
-      "[LOADED] fragment_01: D_D",
-      "[LOADED] fragment_02: YOU",
-      "[LOADED] fragment_03: F_RGET",
-      "[WARNING] Sector 4 corrupted – symbol degraded: 'O'",
-      "",
-      "/// SYSTEM TRACE ///",
-      "Query: Did you...",
-      "Response: █████ you ███get.",
-      "",
-      "Note: Memory reconstruction incomplete.",
-      "Cross-reference missing bit: [shape: round]",
-      "",
-      ">> Standby for manual input."
-    ];
+  const lines = [
+    ">> Initiating memory sequence: 207-3-26",
+    "...",
+    "[LOADED] fragment_01: D_D",
+    "[LOADED] fragment_02: YOU",
+    "[LOADED] fragment_03: F_RGET",
+    "[WARNING] Sector 4 corrupted – symbol degraded: 'O'",
+    "",
+    "/// SYSTEM TRACE ///",
+    "Query: Did you...",
+    "Response: █████ you ███get.",
+    "",
+    "Note: Memory reconstruction incomplete.",
+    "Cross-reference missing bit: [shape: round]",
+    "",
+    ">> Standby for manual input."
+  ];
 
-    let index = 0;
+  let index = 0;
 
-    function printNextLine() {
-      if (index < lines.length) {
-        const line = document.createElement('div');
-        line.className = 'line fade-in fade-delay-3';
-        line.style.animationDelay = `${0.2 * index}s`;
-        line.textContent = lines[index];
-        terminal.appendChild(line);
-        terminal.scrollTop = terminal.scrollHeight;
+  function typeLine(text, callback) {
+    const line = document.createElement('div');
+    line.className = 'line';
+    terminal.appendChild(line);
+    terminal.scrollTop = terminal.scrollHeight;
+
+    let charIndex = 0;
+    const cursor = document.createElement('span');
+    cursor.textContent = '_';
+    line.appendChild(cursor);
+
+    const typer = setInterval(() => {
+      if (charIndex < text.length) {
+        cursor.insertAdjacentText('beforebegin', text[charIndex]);
+        charIndex++;
+      } else {
+        clearInterval(typer);
+        cursor.remove();
+        if (callback) callback();
+      }
+    }, 30); // Typing speed in ms
+  }
+
+  function printNextLine() {
+    if (index < lines.length) {
+      const currentLine = lines[index];
+      typeLine(currentLine, () => {
         index++;
-        setTimeout(printNextLine, 1000);
-      } else {
-        addInputField();
-      }
-    }
-
-    function addInputField() {
-      const inputLine = document.createElement('div');
-      inputLine.className = 'input-line fade-in fade-delay-4';
-
-      const prompt = document.createElement('span');
-      prompt.className = 'prompt';
-      prompt.textContent = '>';
-
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.id = 'commandInput';
-      input.autofocus = true;
-
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          processCommand(input.value.trim());
-          input.disabled = true;
-        }
+        setTimeout(printNextLine, 300); // Delay between lines
       });
-
-      inputLine.appendChild(prompt);
-      inputLine.appendChild(input);
-      terminal.appendChild(inputLine);
-      terminal.scrollTop = terminal.scrollHeight;
-      input.focus();
+    } else {
+      addInputField();
     }
+  }
 
-    function processCommand(command) {
-      const response = document.createElement('div');
-      response.className = 'line fade-in fade-delay-4';
+  function addInputField() {
+    const inputLine = document.createElement('div');
+    inputLine.className = 'input-line fade-in fade-delay-4';
 
-      if (command.toLowerCase() === 'didyufrget') {
-        localStorage.setItem("puzzle7", "solved");
-        response.textContent = "Access Granted – Code: 207 3 26";
-        response.style.color = "#44ff44";
-      } else {
-        response.textContent = "Invalid input. Memory remains incomplete.";
-        response.style.color = "#ff4444";
+    const prompt = document.createElement('span');
+    prompt.className = 'prompt';
+    prompt.textContent = '>';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'commandInput';
+    input.autofocus = true;
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        processCommand(input.value.trim());
+        input.disabled = true;
       }
+    });
 
-      terminal.appendChild(response);
-      terminal.scrollTop = terminal.scrollHeight;
+    inputLine.appendChild(prompt);
+    inputLine.appendChild(input);
+    terminal.appendChild(inputLine);
+    terminal.scrollTop = terminal.scrollHeight;
+    input.focus();
+  }
+
+  function processCommand(command) {
+    const response = document.createElement('div');
+    response.className = 'line fade-in fade-delay-4';
+
+    if (command.toLowerCase() === 'didyufrget') {
+      localStorage.setItem("puzzle7", "solved");
+      response.textContent = "Access Granted – Code: 207 3 26";
+      response.style.color = "#44ff44";
+    } else {
+      response.textContent = "Invalid input. Memory remains incomplete.";
+      response.style.color = "#ff4444";
     }
 
-    window.onload = () => {
-      printNextLine();
-    };
-  </script>
+    terminal.appendChild(response);
+    terminal.scrollTop = terminal.scrollHeight;
+  }
+
+  window.onload = () => {
+    printNextLine();
+  };
+</script>
+
 </body>
 </html>

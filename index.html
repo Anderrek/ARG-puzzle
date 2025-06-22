@@ -10,6 +10,8 @@
       50% { background-color: #0f0f0f; }
     }
 
+    /* DON'T TRUST ANYONE. */
+
     @keyframes glitch {
       0% { transform: translate(0); }
       20% { transform: translate(-1px, 1px); }
@@ -175,7 +177,7 @@
       color: #ccc;
       border: 1px solid #444;
       cursor: pointer;
-
+    /* SOLVE ON YOUR OWN. */
   </style>
 </head>
 <body>
@@ -220,6 +222,7 @@
     </div>
   </div>
 
+  <!-- ONLY ONE OF YOU WILL REMAIN. -->
 
   <button class="reset-button" onclick="resetProgress()">Reset Progress</button>
   <button class="solve-button" id="solveBtn" onclick="downloadFinalImage()">SOLVE</button>
@@ -268,6 +271,7 @@
   }, 3000);
 }
 
+    // DON'T TRY TO FOOL ME. //
 
     function resetProgress() {
       localStorage.clear();
@@ -298,10 +302,8 @@
   function type() {
     if (i < text.length) {
       typewriter.textContent += text.charAt(i);
-      sound.currentTime = 0; // restart dźwięku
-      sound.play();
       i++;
-      setTimeout(type, 300); // prędkość pisania liter (300ms)
+      setTimeout(type, 300);
     }
   }
 

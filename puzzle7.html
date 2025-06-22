@@ -107,17 +107,38 @@
     .red {
       color: #ff4444;
     }
+    #result {
+    margin-top: 15px;
+    font-weight: bold;
+    min-height: 24px;
+    color: #44ff44;
+    font-size: 18px;
+    transition: opacity 0.5s ease;
+    
   </style>
 </head>
 <body>
   <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
   <div class="terminal" id="terminal"></div>
+  <div id="result"></div>
 
   <script>
-    const terminal = document.getElementById('terminal');
 
-    // PASSCODE pobrany z pliku answers.txt, linijka 7 (na sztywno tu wpisany dla demo)
-    const PASSCODE = "didu"; // np. "didu" (dopasuj do rzeczywistego hasła, wszystko uppercase)
+let correctAnswer = "";
+
+  fetch('answers.txt')
+    .then(response => response.text())
+    .then(text => {
+      const lines = text.split('\n');
+      if (lines.length >= 8) {
+        correctAnswer = lines[8].toLowerCase().replace(/\s/g, '');
+      }
+    })
+    .catch(error => {
+      console.error('Błąd przy ładowaniu answers.txt:', error);
+    });
+    
+    const terminal = document.getElementById('terminal');
 
     const introLines = [
       "SYSTEM INIT SEQUENCE 0x7A9F3B",
@@ -137,6 +158,7 @@
     let awaitingInput = false;
     let waitingForPassphrase = false;
     let solved = false;
+    const message = document.getElementById('result');
 
     function typeLine(text, delay = 50, className = '') {
       return new Promise((resolve) => {
@@ -210,26 +232,28 @@
       const cmd = cmdRaw.toUpperCase();
 
       if(waitingForPassphrase){
-        // Sprawdzamy hasło
-        if(cmdRaw.toLowerCase() === PASSCODE.toLowerCase()){
-          // poprawne
-          await typeLine("207 3 26", 40, "green");
+        if(cmdRaw.toLowerCase() === correctAnswer.toLowerCase()){
+  
+          await typeLine("ACCESS GRANTED.", 40, "green");
           solved = true;
           waitingForPassphrase = false;
-          // Po rozwiązaniu nie powtarzamy logu, tylko wyświetlamy kod
+         
         } else {
-          await typeLine("Try again.", 40, "red");
-          // nadal czekamy na hasło, więc nie resetujemy awaitingInput
+          await typeLine("PASSCODE INCORRECT.", 40, "red");
+          
           awaitingInput = false;
           addInputField();
           return;
         }
       } else {
         if(solved){
-          // Po rozwiązaniu zagadki - przy wpisaniu czegokolwiek pokazujemy tylko kod
-          await typeLine("207 3 26", 40, "green");
+          
+          await typeLine("ACCESS GRANTED.", 40, "green");
           awaitingInput = false;
           addInputField();
+          message.style.color = "#44ff44";
+          message.innerText = "207 3 26";
+          localStorage.setItem("puzzle7", "solved");
           return;
         }
 
@@ -255,7 +279,7 @@
               " - Active protocols: RECONSTRUCT, TRACE",
               " - Intrusion attempts: 4 detected",
               " - System uptime: 3h 12m",
-              " - Last reset: 207-03-26"
+              " - Last reset: 15-10-25"
             ]);
             break;
 
@@ -285,7 +309,7 @@
               " Analyzing fragments...",
               " Data missing at segment 4.",
               " Possible keyword pattern detected.",
-              " [ACCESS CODE FRAGMENTS: 207 3 26]",
+              " [ACCESS CODE FRAGMENTS: A1F C2D E4A F12]",
               " Enter passphrase to unlock."
             ]);
             waitingForPassphrase = true;
@@ -381,6 +405,16 @@
     }
 
     printIntroLines();
+
+    window.onload = () => {
+    const message = document.getElementById('result');
+
+    if (localStorage.getItem("puzzle7") === "solved") {
+      message.style.color = "#44ff44";
+      message.innerText = "207 3 26";
+      input.value = correctAnswer;
+    }
+  };
   </script>
 </body>
 </html>

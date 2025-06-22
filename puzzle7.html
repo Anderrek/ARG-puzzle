@@ -5,9 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Puzzle 7</title>
   <style>
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0; }
+    @keyframes typing {
+      0% { width: 0 }
+      100% { width: 100% }
+    }
+
+    @keyframes blinkCaret {
+      0%, 100% { border-color: transparent }
+      50% { border-color: #00ff88 }
     }
 
     body {
@@ -39,6 +44,7 @@
       font-family: 'Courier New', monospace;
       white-space: pre-wrap;
       margin-bottom: 4px;
+      border: none;
     }
 
     .cursor {
@@ -47,6 +53,19 @@
       color: #00ff88;
       animation: blink 1s steps(2, start) infinite;
       user-select: none;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .line.finished {
+      border-right: none;
+      animation: none;
+      white-space: pre-wrap;
+      overflow: visible;
+      width: 100% !important;
     }
 
     .input-line {
@@ -90,6 +109,7 @@
   <script>
     const terminal = document.getElementById('terminal');
 
+    // Pierwotne linie tekstu
     const introLines = [
       "SYSTEM INIT SEQUENCE 0x7A9F3B",
       "MEMORY FRAGMENTS ONLINE...",
@@ -99,25 +119,17 @@
       "[LOG] Partial memory dump follows:",
       "  > Segment A1F: 0xD4 0xE5 0xB9 0x47 0x99",
       "  > Segment C2D: 0x55 0xFC 0x3B 0x6A 0x1D",
-      "  > Segment E4A: 0x9A 0xBB 0x1E 0x44 0x77",
-      "  > Segment F12: 0x6F 0xA3 0xC9 0x10 0x22",
       "[SYSTEM] Reconstruction protocols active.",
       "",
       "TYPE 'HELP' FOR A LIST OF COMMANDS.",
       ""
     ];
 
-    const segmentDetails = {
-      A1F: ["Segment A1F Details:", "Encrypted key: 4B-6A-3D", "Status: OK"],
-      C2D: ["Segment C2D Details:", "Checksum mismatch detected", "Recovery: Not possible"],
-      E4A: ["Segment E4A Details:", "Pattern: ██ ██ █ ██", "Anomaly detected"],
-      F12: ["Segment F12 Details:", "Contains trace logs", "Priority: HIGH"]
-    };
-
     let awaitingInput = false;
-    let segmentDumped = false;
+    let passcode = "DIDYUFRGET";
+    let passcodeIndex = 0;
 
-    function typeLine(text, delay = 30) {
+    function typeLine(text, delay = 50) {
       return new Promise((resolve) => {
         const line = document.createElement('div');
         line.className = 'line';
@@ -178,20 +190,33 @@
     }
 
     async function printIntroLines() {
-      for (let line of introLines) {
-        await typeLine(line);
+      for(let i = 0; i < introLines.length; i++){
+        await typeLine(introLines[i]);
       }
       addInputField();
     }
 
     async function typeMultiLine(lines) {
-      for (let line of lines) {
-        await typeLine(line);
+      for (let i=0; i<lines.length; i++) {
+        await typeLine(lines[i]);
       }
     }
 
     async function processCommand(cmdRaw) {
       const cmd = cmdRaw.toUpperCase();
+
+      // Nie echoujemy wpisanej komendy (usunięte)
+      // await typeLine("> " + cmdRaw, 0);
+
+      // Po komendzie (poza HELP) pokazujemy dwie litery z passcode
+      function revealPasscodeLetters() {
+        if (passcodeIndex < passcode.length) {
+          const letters = passcode.substr(passcodeIndex, 2);
+          passcodeIndex += 2;
+          return letters;
+        }
+        return "";
+      }
 
       switch(cmd) {
         case "HELP":
@@ -200,9 +225,11 @@
             "HELP        - Show this help text",
             "STATUS      - Show current system status",
             "DUMP        - Dump memory fragments",
-            "TRACE       - Show recent trace logs",
+            "TRACE       - Show recent trace logs or TRACE <segment>",
             "RECONSTRUCT - Attempt data reconstruction",
-            "RESET       - Restart session"
+            "RESET       - Restart session",
+            "SCAN        - Scan a segment for anomalies (e.g. SCAN E4A)",
+            "RECOVER     - Attempt recovery on segment (e.g. RECOVER C2D)"
           ]);
           break;
 
@@ -215,18 +242,18 @@
             " - System uptime: 3h 12m",
             " - Last reset: 207-03-26"
           ]);
+          await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
           break;
 
         case "DUMP":
           await typeMultiLine([
             "MEMORY DUMP SEGMENTS:",
-            " A1F",
-            " C2D",
-            " E4A",
-            " F12",
-            "Type a segment code (e.g. A1F) to inspect its content."
+            " A1F: 0x44 0x49 0x44 0xE5 0xB9 0x47 0x99",
+            " C2D: 0x55 0xFC 0x3B 0x6A 0x1D (recovery not possible)",
+            " E4A: 0x9A 0xBB 0x1E 0x44 0x77 (anomaly detected)",
+            " F12: 0x6F 0xA3 0xC9 0x10 0x22 (high priority)"
           ]);
-          segmentDumped = true;
+          await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
           break;
 
         case "TRACE":
@@ -237,6 +264,7 @@
             " Malware signature detected in sector 4.",
             " Trace vector rerouted through node 9."
           ]);
+          await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
           break;
 
         case "RECONSTRUCT":
@@ -248,23 +276,75 @@
             " [ACCESS CODE FRAGMENTS: 207 3 26]",
             " Enter passphrase to unlock."
           ]);
+          await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
           break;
 
         case "RESET":
           terminal.innerHTML = '';
           awaitingInput = false;
-          segmentDumped = false;
+          passcodeIndex = 0;
           printIntroLines();
           return;
 
         default:
-          if (segmentDumped && segmentDetails[cmd]) {
-            await typeMultiLine(segmentDetails[cmd]);
-          } else if (cmdRaw.toLowerCase() === 'didyufrget') {
-            localStorage.setItem("puzzle7", "solved");
-            await typeLine("ACCESS GRANTED – Code: 207 3 26", 0);
+          // Komendy z parametrem, np. SCAN E4A, TRACE F12, RECOVER C2D, lub podanie segmentu
+          let parts = cmd.split(" ");
+          if(parts.length === 2){
+            let mainCmd = parts[0];
+            let param = parts[1];
+
+            if(mainCmd === "SCAN" && param === "E4A"){
+              await typeMultiLine([
+                "SCAN INITIATED ON SEGMENT E4A...",
+                "Analyzing...",
+                "Signal noise: ██F█R█G██",
+                "Reconstruction failed. Suggest: manual extraction."
+              ]);
+              await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
+              awaitingInput = false;
+              addInputField();
+              return;
+            }
+
+            if(mainCmd === "TRACE" && param === "F12"){
+              await typeMultiLine([
+                "TRACE LOG F12:",
+                "[LOG 12:07] E: Elevation threshold exceeded",
+                "[LOG 12:08] T: Trace vector rerouted",
+                "Priority logs archived."
+              ]);
+              await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
+              awaitingInput = false;
+              addInputField();
+              return;
+            }
+
+            if(mainCmd === "RECOVER" && param === "C2D"){
+              await typeMultiLine([
+                "Attempting sector recovery C2D...",
+                "-- Fragment dump: ...Y..U..0x2A..corrupted --",
+                "Recovery failed."
+              ]);
+              await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
+              awaitingInput = false;
+              addInputField();
+              return;
+            }
+          }
+
+          // Jeśli wpisano sam segment, wyświetl jego zawartość (np. A1F)
+          const segments = {
+            "A1F": "Segment A1F data: Encrypted key hex: 44 49 44 (ASCII for 'DID')",
+            "C2D": "Segment C2D data: Corrupted, recovery not possible.",
+            "E4A": "Segment E4A data: Anomaly detected in data stream.",
+            "F12": "Segment F12 data: High priority flagged segment."
+          };
+
+          if(segments[cmd]){
+            await typeLine(segments[cmd]);
+            await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
           } else {
-            await typeLine("ERROR: Unknown command. Type HELP for options.");
+            await typeLine("Unknown command or segment. Type HELP for commands.");
           }
           break;
       }
@@ -273,9 +353,7 @@
       addInputField();
     }
 
-    window.onload = () => {
-      printIntroLines();
-    };
+    printIntroLines();
   </script>
 </body>
 </html>

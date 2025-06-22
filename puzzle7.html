@@ -32,6 +32,26 @@
       white-space: pre-wrap;
     }
 
+    .input-line {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .prompt {
+      margin-right: 5px;
+    }
+
+    #commandInput {
+      background-color: #000;
+      color: #00ff88;
+      border: none;
+      outline: none;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      flex: 1;
+    }
+
     .back-button {
       position: fixed;
       top: 20px;
@@ -48,7 +68,7 @@
 </head>
 <body>
   <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
-  <!-- the -->
+
   <div class="terminal" id="terminal"></div>
 
   <script>
@@ -83,7 +103,53 @@
         terminal.scrollTop = terminal.scrollHeight;
         index++;
         setTimeout(printNextLine, 1000);
+      } else {
+        addInputField();
       }
+    }
+
+    function addInputField() {
+      const inputLine = document.createElement('div');
+      inputLine.className = 'input-line';
+
+      const prompt = document.createElement('span');
+      prompt.className = 'prompt';
+      prompt.textContent = '>';
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = 'commandInput';
+      input.autofocus = true;
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          processCommand(input.value.trim());
+          input.disabled = true;
+        }
+      });
+
+      inputLine.appendChild(prompt);
+      inputLine.appendChild(input);
+      terminal.appendChild(inputLine);
+      terminal.scrollTop = terminal.scrollHeight;
+      input.focus();
+    }
+
+    function processCommand(command) {
+      const response = document.createElement('div');
+      response.className = 'line';
+
+      if (command.toLowerCase() === 'didyufrget') {
+        localStorage.setItem("puzzle7", "solved");
+        response.textContent = "Access Granted – Code: 207 3 26";
+        response.style.color = "#44ff44";
+      } else {
+        response.textContent = "Invalid input. Memory remains incomplete.";
+        response.style.color = "#ff4444";
+      }
+
+      terminal.appendChild(response);
+      terminal.scrollTop = terminal.scrollHeight;
     }
 
     window.onload = () => {

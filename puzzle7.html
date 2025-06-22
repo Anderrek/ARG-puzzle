@@ -240,7 +240,7 @@ let correctAnswer = "";
          
         } else {
           await typeLine("PASSCODE INCORRECT.", 40, "red");
-          
+          waitingForPassphrase = false;
           awaitingInput = false;
           addInputField();
           return;
@@ -249,6 +249,8 @@ let correctAnswer = "";
         if(solved){
           
           await typeLine("ACCESS GRANTED.", 40, "green");
+          solved = true;
+          waitingForPassphrase = false;
           awaitingInput = false;
           addInputField();
           message.style.color = "#44ff44";

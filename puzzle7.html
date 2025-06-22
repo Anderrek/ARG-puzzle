@@ -131,7 +131,7 @@ let correctAnswer = "";
     .then(text => {
       const lines = text.split('\n');
       if (lines.length >= 8) {
-        correctAnswer = lines[8].toLowerCase().replace(/\s/g, '');
+        correctAnswer = lines[6].toLowerCase().replace(/\s/g, '');
       }
     })
     .catch(error => {

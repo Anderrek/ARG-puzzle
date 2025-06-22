@@ -126,8 +126,6 @@
     ];
 
     let awaitingInput = false;
-    let passcode = "DIDYUFRGET";
-    let passcodeIndex = 0;
 
     function typeLine(text, delay = 50) {
       return new Promise((resolve) => {
@@ -205,19 +203,6 @@
     async function processCommand(cmdRaw) {
       const cmd = cmdRaw.toUpperCase();
 
-      // Nie echoujemy wpisanej komendy (usunięte)
-      // await typeLine("> " + cmdRaw, 0);
-
-      // Po komendzie (poza HELP) pokazujemy dwie litery z passcode
-      function revealPasscodeLetters() {
-        if (passcodeIndex < passcode.length) {
-          const letters = passcode.substr(passcodeIndex, 2);
-          passcodeIndex += 2;
-          return letters;
-        }
-        return "";
-      }
-
       switch(cmd) {
         case "HELP":
           await typeMultiLine([
@@ -242,7 +227,6 @@
             " - System uptime: 3h 12m",
             " - Last reset: 207-03-26"
           ]);
-          await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
           break;
 
         case "DUMP":
@@ -253,7 +237,6 @@
             " E4A: 0x9A 0xBB 0x1E 0x44 0x77 (anomaly detected)",
             " F12: 0x6F 0xA3 0xC9 0x10 0x22 (high priority)"
           ]);
-          await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
           break;
 
         case "TRACE":
@@ -264,7 +247,6 @@
             " Malware signature detected in sector 4.",
             " Trace vector rerouted through node 9."
           ]);
-          await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
           break;
 
         case "RECONSTRUCT":
@@ -276,13 +258,11 @@
             " [ACCESS CODE FRAGMENTS: 207 3 26]",
             " Enter passphrase to unlock."
           ]);
-          await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
           break;
 
         case "RESET":
           terminal.innerHTML = '';
           awaitingInput = false;
-          passcodeIndex = 0;
           printIntroLines();
           return;
 
@@ -293,39 +273,48 @@
             let mainCmd = parts[0];
             let param = parts[1];
 
-            if(mainCmd === "SCAN" && param === "E4A"){
-              await typeMultiLine([
-                "SCAN INITIATED ON SEGMENT E4A...",
-                "Analyzing...",
-                "Signal noise: ██F█R█G██",
-                "Reconstruction failed. Suggest: manual extraction."
-              ]);
-              await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
+            if(mainCmd === "SCAN"){
+              if(param === "E4A"){
+                await typeMultiLine([
+                  "SCAN INITIATED ON SEGMENT E4A...",
+                  "Analyzing...",
+                  "Signal noise: ██F█R█G██",
+                  "Reconstruction failed. Suggest: manual extraction."
+                ]);
+              } else {
+                await typeLine(`Scan on segment ${param} shows no anomalies or is unsupported.`);
+              }
               awaitingInput = false;
               addInputField();
               return;
             }
 
-            if(mainCmd === "TRACE" && param === "F12"){
-              await typeMultiLine([
-                "TRACE LOG F12:",
-                "[LOG 12:07] E: Elevation threshold exceeded",
-                "[LOG 12:08] T: Trace vector rerouted",
-                "Priority logs archived."
-              ]);
-              await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
+            if(mainCmd === "TRACE"){
+              if(param === "F12"){
+                await typeMultiLine([
+                  "TRACE LOG F12:",
+                  "[LOG 12:07] E: Elevation threshold exceeded",
+                  "[LOG 12:08] T: Trace vector rerouted",
+                  "Priority logs archived."
+                ]);
+              } else {
+                await typeLine(`No trace data available for segment ${param}.`);
+              }
               awaitingInput = false;
               addInputField();
               return;
             }
 
-            if(mainCmd === "RECOVER" && param === "C2D"){
-              await typeMultiLine([
-                "Attempting sector recovery C2D...",
-                "-- Fragment dump: ...Y..U..0x2A..corrupted --",
-                "Recovery failed."
-              ]);
-              await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
+            if(mainCmd === "RECOVER"){
+              if(param === "C2D"){
+                await typeMultiLine([
+                  "Attempting sector recovery C2D...",
+                  "-- Fragment dump: ...Y..U..0x2A..corrupted --",
+                  "Recovery failed."
+                ]);
+              } else {
+                await typeLine(`Recovery not applicable or not supported for segment ${param}.`);
+              }
               awaitingInput = false;
               addInputField();
               return;
@@ -342,7 +331,6 @@
 
           if(segments[cmd]){
             await typeLine(segments[cmd]);
-            await typeLine("Encrypted key fragment: " + revealPasscodeLetters());
           } else {
             await typeLine("Unknown command or segment. Type HELP for commands.");
           }
